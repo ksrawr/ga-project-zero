@@ -52,3 +52,39 @@ class Game {
     
   }
 }
+
+/* constants */
+const playerElement = document.getElementById('player');
+
+const bodyElement = document.querySelector('body');
+
+const game = new Game();
+game.startGame();
+
+console.log(bodyElement);
+/* --------EVENT LISTENERS ------- */
+
+let x = 0;
+let y = 0;
+document.addEventListener('keydown', (event) => {
+  if(event.key === 'ArrowDown') {
+    y += 5;
+    playerElement.style.top = y + 'px';
+  } else if (event.key === "ArrowUp") {
+    y -= 5;
+    playerElement.style.top = y + 'px';
+  } else if (event.key === "ArrowLeft") {
+    x -= 5;
+    playerElement.style.left = x + 'px';
+  } else if (event.key === "ArrowRight") {
+    x += 5;
+    playerElement.style.left = x + 'px';
+  }
+});
+
+document.addEventListener('mousedown', (event) => {
+
+  const bulletTemplate = `<div id="bullet" style="top:${event.screenY}; left:${event.screenX};></div>`;
+  
+  bodyElement.insertAdjacentElement('afterbegin', bulletTemplate);
+});
