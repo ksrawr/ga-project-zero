@@ -6,5 +6,25 @@
 
 main { 
   min-height: 100vh;
-  background-color: black;
+  background-color: #f1f1f1;
+}
+
+#player {
+  width: 51px;
+  height: 48px;
+  background: url(../images/AH-People1.png) 0 0;
+  display: block;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+}
+
+#bullet {
+  background: url(../images/bulletc.png);
+  display: block;
+  top: 0;
+  left: 0;
+  position: relative;
 }
