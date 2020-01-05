@@ -21,7 +21,7 @@ main {
   bottom: 50px;
 }
 
-#bullet {
+.bullet {
   width: 20px;
   height: 20px;
   background: url(../images/bulletc.png);
