@@ -14,7 +14,7 @@ main {
   height: 48px;
   background: url(../images/AH-People1.png) 0 0;
   display: block;
-  position: relative;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -22,9 +22,10 @@ main {
 }
 
 #bullet {
+  width: 20px;
+  height: 20px;
   background: url(../images/bulletc.png);
-  display: block;
   top: 0;
   left: 0;
-  position: relative;
+  position: absolute;
 }

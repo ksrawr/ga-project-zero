@@ -58,10 +58,14 @@ const playerElement = document.getElementById('player');
 
 const bodyElement = document.querySelector('body');
 
+const mainElement = document.querySelector('main');
+
 const game = new Game();
 game.startGame();
 
-console.log(bodyElement);
+/* --------- FUNCTIONS ------------ */
+
+
 /* --------EVENT LISTENERS ------- */
 
 let x = 0;
@@ -84,7 +88,12 @@ document.addEventListener('keydown', (event) => {
 
 document.addEventListener('mousedown', (event) => {
 
-  const bulletTemplate = `<div id="bullet" style="top:${event.screenY}; left:${event.screenX};></div>`;
+  // const bulletTemplate = `<div id="bullet"></div>`;
   
-  bodyElement.insertAdjacentElement('afterbegin', bulletTemplate);
+  const bulletElement = document.createElement('div');
+  bulletElement.setAttribute("id", "bullet");
+  bulletElement.style.left = event.screenX + 'px';
+  bulletElement.style.top = event.screenY + 'px';
+
+  mainElement.insertAdjacentElement('afterbegin', bulletElement);
 });
