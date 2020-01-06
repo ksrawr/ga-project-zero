@@ -34,13 +34,14 @@ class Bullet {
 }
 
 class Zombie {
-  constructor(image, x, y, vx, vy) {
+  constructor(image, x, y, vx, vy, element) {
     this.image = image;
     this.x = x;
     this.y = y;
     this.vx = vx;
     this.vy = vy;
     this.damage = 3;
+    this.element = element;
   }
 }
 
@@ -56,7 +57,132 @@ class Game {
   }
 
   startGame() {
+    window.addEventListener('keydown', (event) => {
+      let x = game.survivor.x;
+      let y = game.survivor.y;
+      if(event.key === 'ArrowDown' || event.key === 's') {
+        y += 5;
+        playerElement.style.top = y + 'px';
+      } else if (event.key === "ArrowUp" || event.key === 'w') {
+        y -= 5;
+        playerElement.style.top = y + 'px';
+      } else if (event.key === "ArrowLeft" || event.key === 'a') {
+        x -= 5;
+        playerElement.style.left = x + 'px';
+      } else if (event.key === "ArrowRight" || event.key === 'd') {
+        x += 5;
+        playerElement.style.left = x + 'px';
+      }
+      game.survivor.updatePosition(x, y);
+    });
+    
+    window.addEventListener('mousedown', (event) => {
+    
+      // const bulletTemplate = `<div id="bullet"></div>`;
+      
+      const mouseClickedX = event.clientX;
+      const mouseClickedY = event.clientY;
+    
+      console.log(mouseClickedX);
+      console.log(mouseClickedY);
+    
+      let bulletX = game.survivor.x + 10;
+      let bulletY = game.survivor.y + 10;
+      
+      const bulletElement = document.createElement('div');
+      bulletElement.setAttribute("class", "bullet");
+      bulletElement.style.left = bulletX + 'px';
+      bulletElement.style.top = bulletY + 'px';
+    
+      mainElement.insertAdjacentElement('afterbegin', bulletElement);
+    
+      /* Bullet should move until the it's reached the end of its trajectory */
+      /* remove bullet when it reaches the end */
+      const windowLimitX = game.documentWidth;
+      const windowLimitY = game.documentHeight;
+    
+      const currentBullet = document.querySelector('.bullet');
+    
+      const angle = calculateAngle(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
+      console.log(angle);
+    
+      const radians = calculateRadians(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
+      console.log(radians);
+    
+    
+      if(angle <= 90) {
+        while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+          console.log("hello");
+          // $(currentBullet).css({"left": bulletX, "top": bulletY});
+          bulletX += Math.abs(1 * Math.cos(angle));
+          bulletY -= Math.abs(1 * Math.sin(angle));
+          currentBullet.style.left = bulletX + 'px';
+          currentBullet.style.top = bulletY + 'px';
+        }
+      } else if(angle <= 180) {
+          while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+            console.log("hello");
+            bulletX -= Math.abs(1 * Math.cos(angle));
+            bulletY -= Math.abs(1 * Math.sin(angle));
+            currentBullet.style.left = bulletX + 'px';
+            currentBullet.style.top = bulletY + 'px';
+          }  
+      } else if(angle <= 270) {
+          while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+            console.log("hello");
+            bulletX -= Math.abs(1 * Math.cos(angle));
+            bulletY += Math.abs(1 * Math.sin(angle));
+            currentBullet.style.left = bulletX + 'px';
+            currentBullet.style.top = bulletY + 'px';
+          } 
+      } else if(angle <= 360) {
+          while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+            console.log("hello");
+            bulletX += Math.abs(1 * Math.cos(angle));
+            bulletY += Math.abs(1 * Math.sin(angle));
+            currentBullet.style.left = bulletX + 'px';
+            currentBullet.style.top = bulletY + 'px';
+          } 
+      } 
+    });
+  }
 
+  moveZombieToPlayer(zombie) {
+    const angle = calculateAngle(zombie.x - game.survivor.x, game.survivor.y - zombie.y);
+    
+    if(angle <= 90) {
+      while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
+        console.log("hello");
+        zombie.x += Math.abs(1 * Math.cos(angle));
+        zombie.y -= Math.abs(1 * Math.sin(angle));
+        zombie.style.left = zombie.x + 'px';
+        zombie.style.top = zombie.y + 'px';
+      }
+    } else if(angle <= 180) {
+        while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
+          console.log("hello");
+          zombie.x -= Math.abs(1 * Math.cos(angle));
+          zombie.y -= Math.abs(1 * Math.sin(angle));
+          zombie.style.left = zombie.x + 'px';
+          zombie.style.top = zombie.y + 'px';
+        }
+    } else if(angle <= 270) {
+        while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
+          console.log("hello");
+          zombie.x -= Math.abs(1 * Math.cos(angle));
+          zombie.y += Math.abs(1 * Math.sin(angle));
+          zombie.style.left = zombie.x + 'px';
+          zombie.style.top = zombie.y + 'px';
+        }
+    } else if(angle <= 360) {
+      while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
+        console.log("hello");
+        zombie.x += Math.abs(1 * Math.cos(angle));
+        zombie.y += Math.abs(1 * Math.sin(angle));
+        zombie.style.left = zombie.x + 'px';
+        zombie.style.top = zombie.y + 'px';
+      }
+    } 
   }
 }
 
@@ -66,6 +192,8 @@ playerElement.style.left = "50%";
 playerElement.style.top = "50%";
 console.log(playerElement.offsetTop);
 console.log(playerElement.offsetLeft);
+
+const zombieElement = document.querySelector('zombie');
 
 const bodyElement = document.querySelector('body');
 
@@ -77,27 +205,19 @@ game.startGame();
 game.survivor.x = playerElement.offsetLeft;
 game.survivor.y = playerElement.offsetTop;
 
+game.zombies[0].x = zombieElement.offsetLeft;
+game.zombies[0].y = zombieElement.offsetTop;
+
 /* --------- FUNCTIONS ------------ */
 
-
-// function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
-//   // let angle = Math.atan(mouseClickedY - y, mouseClickedX - x) * 180 / Math.PI;
-//   let self = Math.sqrt(x ** 2 + y ** 2);
-//   // console.log(self);
-//   let mouse = Math.sqrt(mouseClickedX ** 2 + mouseClickedY ** 2);
-//   // console.log(mouse);
-//   let vectorProduct = x * mouseClickedX + y * mouseClickedY;
-//   // console.log(vectorProduct);
-//   let radians = Math.acos(vectorProduct/(self * mouse));
-
-//   return radians * (180/Math.PI);
-// }
-
+// spawn zombieInRandomLocation but give a minimum distance of 50px away from player                                                                                                                                                                                                   
 function createZombie() {
   const zombieElement = document.createElement('img');
   zombieElement.setAttribute("class", "zombie");
   const random = Math.floor(Math.random() * (300 - 50 + 1) + 50);
-  zombieElement.style.left =  + 'px'; 
+  zombieElement.style.left =  + 'px';
+  // game.zombie[0].element = zombieElement;
+  // moveZombieToPlayer(game.zombie[0]);
 }
 
 function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
@@ -115,101 +235,101 @@ function calculateRadians(x, y, mouseClickedX, mouseClickedY) {
 }
 
 /* --------EVENT LISTENERS ------- */
-window.addEventListener('keydown', (event) => {
-  let x = game.survivor.x;
-  let y = game.survivor.y;
-  if(event.key === 'ArrowDown' || event.key === 's') {
-    y += 5;
-    playerElement.style.top = y + 'px';
-  } else if (event.key === "ArrowUp" || event.key === 'w') {
-    y -= 5;
-    playerElement.style.top = y + 'px';
-  } else if (event.key === "ArrowLeft" || event.key === 'a') {
-    x -= 5;
-    playerElement.style.left = x + 'px';
-  } else if (event.key === "ArrowRight" || event.key === 'd') {
-    x += 5;
-    playerElement.style.left = x + 'px';
-  }
-  game.survivor.updatePosition(x, y);
-});
+// window.addEventListener('keydown', (event) => {
+//   let x = game.survivor.x;
+//   let y = game.survivor.y;
+//   if(event.key === 'ArrowDown' || event.key === 's') {
+//     y += 5;
+//     playerElement.style.top = y + 'px';
+//   } else if (event.key === "ArrowUp" || event.key === 'w') {
+//     y -= 5;
+//     playerElement.style.top = y + 'px';
+//   } else if (event.key === "ArrowLeft" || event.key === 'a') {
+//     x -= 5;
+//     playerElement.style.left = x + 'px';
+//   } else if (event.key === "ArrowRight" || event.key === 'd') {
+//     x += 5;
+//     playerElement.style.left = x + 'px';
+//   }
+//   game.survivor.updatePosition(x, y);
+// });
 
-window.addEventListener('mousedown', (event) => {
+// window.addEventListener('mousedown', (event) => {
 
-  // const bulletTemplate = `<div id="bullet"></div>`;
+//   // const bulletTemplate = `<div id="bullet"></div>`;
   
-  const mouseClickedX = event.clientX;
-  const mouseClickedY = event.clientY;
+//   const mouseClickedX = event.clientX;
+//   const mouseClickedY = event.clientY;
 
-  console.log(mouseClickedX);
-  console.log(mouseClickedY);
+//   console.log(mouseClickedX);
+//   console.log(mouseClickedY);
 
-  let bulletX = game.survivor.x + 10;
-  let bulletY = game.survivor.y + 10;
+//   let bulletX = game.survivor.x + 10;
+//   let bulletY = game.survivor.y + 10;
   
-  const bulletElement = document.createElement('div');
-  bulletElement.setAttribute("class", "bullet");
-  bulletElement.style.left = bulletX + 'px';
-  bulletElement.style.top = bulletY + 'px';
+//   const bulletElement = document.createElement('div');
+//   bulletElement.setAttribute("class", "bullet");
+//   bulletElement.style.left = bulletX + 'px';
+//   bulletElement.style.top = bulletY + 'px';
 
-  mainElement.insertAdjacentElement('afterbegin', bulletElement);
+//   mainElement.insertAdjacentElement('afterbegin', bulletElement);
 
-  /* Bullet should move until the it's reached the end of its trajectory */
-  /* remove bullet when it reaches the end */
-  const windowLimitX = game.documentWidth;
-  const windowLimitY = game.documentHeight;
+//   /* Bullet should move until the it's reached the end of its trajectory */
+//   /* remove bullet when it reaches the end */
+//   const windowLimitX = game.documentWidth;
+//   const windowLimitY = game.documentHeight;
 
-  const currentBullet = document.querySelector('.bullet');
+//   const currentBullet = document.querySelector('.bullet');
 
-  const angle = calculateAngle(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
-  console.log(angle);
+//   const angle = calculateAngle(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
+//   console.log(angle);
 
-  const radians = calculateRadians(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
-  console.log(radians);
+//   const radians = calculateRadians(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
+//   console.log(radians);
 
 
-  console.log(bulletX);
-  // while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-  //   console.log("hello");
-  //   bulletX += 5 * Math.cos(angle);
-  //   bulletY -= Math.abs(5 * Math.sin(angle));
-  //   currentBullet.style.left = bulletX + 'px';
-  //   currentBullet.style.top = bulletY + 'px';
-  // }
-  if(angle <= 90) {
-    while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-      console.log("hello");
-      // $(currentBullet).css({"left": bulletX, "top": bulletY});
-      bulletX += Math.abs(2 * Math.cos(angle));
-      bulletY -= Math.abs(2 * Math.sin(angle));
-      currentBullet.style.left = bulletX + 'px';
-      currentBullet.style.top = bulletY + 'px';
-      location.reload();
-    }
-  } else if(angle <= 180) {
-      while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-        console.log("hello");
-        bulletX -= Math.abs(2 * Math.cos(angle));
-        bulletY -= Math.abs(2 * Math.sin(angle));
-        currentBullet.style.left = bulletX + 'px';
-        currentBullet.style.top = bulletY + 'px';
-      }  
-  } else if(angle <= 270) {
-      while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-        console.log("hello");
-        bulletX -= Math.abs(2 * Math.cos(angle));
-        bulletY += Math.abs(2 * Math.sin(angle));
-        currentBullet.style.left = bulletX + 'px';
-        currentBullet.style.top = bulletY + 'px';
-      } 
-  } else if(angle <= 360) {
-      while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-        console.log("hello");
-        bulletX += Math.abs(2 * Math.cos(angle));
-        bulletY += Math.abs(2 * Math.sin(angle));
-        currentBullet.style.left = bulletX + 'px';
-        currentBullet.style.top = bulletY + 'px';
-      } 
-  } 
-});
+//   console.log(bulletX);
+//   // while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+//   //   console.log("hello");
+//   //   bulletX += 5 * Math.cos(angle);
+//   //   bulletY -= Math.abs(5 * Math.sin(angle));
+//   //   currentBullet.style.left = bulletX + 'px';
+//   //   currentBullet.style.top = bulletY + 'px';
+//   // }
+//   if(angle <= 90) {
+//     while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+//       console.log("hello");
+//       // $(currentBullet).css({"left": bulletX, "top": bulletY});
+//       bulletX += Math.abs(2 * Math.cos(angle));
+//       bulletY -= Math.abs(2 * Math.sin(angle));
+//       currentBullet.style.left = bulletX + 'px';
+//       currentBullet.style.top = bulletY + 'px';
+//       location.reload();
+//     }
+//   } else if(angle <= 180) {
+//       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+//         console.log("hello");
+//         bulletX -= Math.abs(2 * Math.cos(angle));
+//         bulletY -= Math.abs(2 * Math.sin(angle));
+//         currentBullet.style.left = bulletX + 'px';
+//         currentBullet.style.top = bulletY + 'px';
+//       }  
+//   } else if(angle <= 270) {
+//       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+//         console.log("hello");
+//         bulletX -= Math.abs(2 * Math.cos(angle));
+//         bulletY += Math.abs(2 * Math.sin(angle));
+//         currentBullet.style.left = bulletX + 'px';
+//         currentBullet.style.top = bulletY + 'px';
+//       } 
+//   } else if(angle <= 360) {
+//       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+//         console.log("hello");
+//         bulletX += Math.abs(2 * Math.cos(angle));
+//         bulletY += Math.abs(2 * Math.sin(angle));
+//         currentBullet.style.left = bulletX + 'px';
+//         currentBullet.style.top = bulletY + 'px';
+//       } 
+//   } 
+// });
 
