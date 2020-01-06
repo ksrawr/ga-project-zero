@@ -28,6 +28,7 @@ main {
   top: 0;
   left: 0;
   position: absolute;
+  transition: all 5000ms linear;
 }
 
 .zombie {
@@ -35,4 +36,9 @@ main {
   height: 80px;
   background: url(../images/ZombieCA.png) 0 0;
   position: absolute;
+}
+
+.bullet-end {
+  top:
+
 }
