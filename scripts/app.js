@@ -145,17 +145,14 @@ window.addEventListener('mousedown', (event) => {
   bulletElement.style.left = bulletX + 'px';
   bulletElement.style.top = bulletY + 'px';
 
-  // mainElement.insertAdjacentElement('afterbegin', bulletElement);
+  mainElement.insertAdjacentElement('afterbegin', bulletElement);
 
   /* Bullet should move until the it's reached the end of its trajectory */
   /* remove bullet when it reaches the end */
   const windowLimitX = game.documentWidth;
   const windowLimitY = game.documentHeight;
 
-  // const currentBullet = document.querySelector('.bullet');
-  $("main").prepend($(`<div class="bullet"></div>`));
-  const currentBullet = $('.bullet').eq(0);
-  console.log(currentBullet);
+  const currentBullet = document.querySelector('.bullet');
 
   const angle = calculateAngle(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
   console.log(angle);
@@ -163,6 +160,8 @@ window.addEventListener('mousedown', (event) => {
   const radians = calculateRadians(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
   console.log(radians);
 
+
+  console.log(bulletX);
   // while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
   //   console.log("hello");
   //   bulletX += 5 * Math.cos(angle);
@@ -173,36 +172,36 @@ window.addEventListener('mousedown', (event) => {
   if(angle <= 90) {
     while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
       console.log("hello");
-      $(currentBullet).css({"left": bulletX, "top": bulletY});
+      // $(currentBullet).css({"left": bulletX, "top": bulletY});
       bulletX += Math.abs(2 * Math.cos(angle));
       bulletY -= Math.abs(2 * Math.sin(angle));
-      // currentBullet.style.left = bulletX + 'px';
-      // currentBullet.style.top = bulletY + 'px';
+      currentBullet.style.left = bulletX + 'px';
+      currentBullet.style.top = bulletY + 'px';
     }
-  // } else if(angle <= 180) {
-  //     while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-  //       console.log("hello");
-  //       bulletX -= Math.abs(2 * Math.cos(angle));
-  //       bulletY -= Math.abs(2 * Math.sin(angle));
-  //       currentBullet.style.left = bulletX + 'px';
-  //       currentBullet.style.top = bulletY + 'px';
-  //     }  
-  // } else if(angle <= 270) {
-  //     while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-  //       console.log("hello");
-  //       bulletX -= Math.abs(2 * Math.cos(angle));
-  //       bulletY += Math.abs(2 * Math.sin(angle));
-  //       currentBullet.style.left = bulletX + 'px';
-  //       currentBullet.style.top = bulletY + 'px';
-  //     } 
-  // } else if(angle <= 360) {
-  //     while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-  //       console.log("hello");
-  //       bulletX += Math.abs(2 * Math.cos(angle));
-  //       bulletY += Math.abs(2 * Math.sin(angle));
-  //       currentBullet.style.left = bulletX + 'px';
-  //       currentBullet.style.top = bulletY + 'px';
-  //     } 
+  } else if(angle <= 180) {
+      while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+        console.log("hello");
+        bulletX -= Math.abs(2 * Math.cos(angle));
+        bulletY -= Math.abs(2 * Math.sin(angle));
+        currentBullet.style.left = bulletX + 'px';
+        currentBullet.style.top = bulletY + 'px';
+      }  
+  } else if(angle <= 270) {
+      while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+        console.log("hello");
+        bulletX -= Math.abs(2 * Math.cos(angle));
+        bulletY += Math.abs(2 * Math.sin(angle));
+        currentBullet.style.left = bulletX + 'px';
+        currentBullet.style.top = bulletY + 'px';
+      } 
+  } else if(angle <= 360) {
+      while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
+        console.log("hello");
+        bulletX += Math.abs(2 * Math.cos(angle));
+        bulletY += Math.abs(2 * Math.sin(angle));
+        currentBullet.style.left = bulletX + 'px';
+        currentBullet.style.top = bulletY + 'px';
+      } 
   }
   
 
