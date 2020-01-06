@@ -29,3 +29,10 @@ main {
   left: 0;
   position: absolute;
 }
+
+.zombie {
+  width: 41px;
+  height: 80px;
+  background: url(../images/ZombieCA.png) 0 0;
+  position: absolute;
+}

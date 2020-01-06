@@ -93,6 +93,13 @@ game.survivor.y = playerElement.offsetTop;
 //   return radians * (180/Math.PI);
 // }
 
+function createZombie() {
+  const zombieElement = document.createElement('img');
+  zombieElement.setAttribute("class", "zombie");
+  const random = Math.floor(Math.random() * (300 - 50 + 1) + 50);
+  zombieElement.style.left =  + 'px'; 
+}
+
 function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
   let angle =  Math.atan2(y, x) * 180 / Math.PI;
 
@@ -177,6 +184,7 @@ window.addEventListener('mousedown', (event) => {
       bulletY -= Math.abs(2 * Math.sin(angle));
       currentBullet.style.left = bulletX + 'px';
       currentBullet.style.top = bulletY + 'px';
+      location.reload();
     }
   } else if(angle <= 180) {
       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
@@ -202,8 +210,6 @@ window.addEventListener('mousedown', (event) => {
         currentBullet.style.left = bulletX + 'px';
         currentBullet.style.top = bulletY + 'px';
       } 
-  }
-  
-
-  
+  } 
 });
+
