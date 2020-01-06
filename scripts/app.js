@@ -1,3 +1,5 @@
+let zombieMoveInterval;
+
 class Survivor {
   constructor(image, x = 0, y = 0, vx, vy) {
     this.image = image;
@@ -147,42 +149,113 @@ class Game {
     });
   }
 
+  createZombie() {
+    this.zombies.forEach((zombie) => {
+      const zombieElement = document.createElement('img');
+      zombieElement.setAttribute("class", "zombie");
+      // spawnPoints contains all possible spawn points (x, y);
+      const spawnPoints = [
+        // top left
+        {
+          'x': 0,
+          'y': 0
+        },
+        // top right
+        {
+          'x': $(document.width()),
+          'y': 0
+        },
+        // bottom left
+        {
+          'x': 0,
+          'y': $(document.height())
+        },
+        // bottom right
+        {
+          'x': $(document.width()),
+          'y': $(document.height())
+        },
+        // middle top
+        {
+          'x': $(document.width()) / 2,
+          'y': 0
+        },
+        // middle bottom
+        {
+          'x': $(document.width()) / 2,
+          'y': $(document.height())
+        },
+        // middle left
+        {
+          'x': 0,
+          'y': $(document.height()) / 2
+        },
+        // middle right
+        {
+          'x': $(document.widht()),
+          'y': $(document.height()) / 2
+        }
+      ];
+      const random = Math.floor(Math.random() * spawnPoints.length);
+      zombieElement.style.left = spawnPoints[random].x  + 'px';
+      zombieElement.style.top =  spawnPoints[random].y + 'px';
+      zombie.element = zombieElement;
+      mainElement.insertAdjacentElement('beforeend', zombie.element);
+      // this.moveZombieToPlayer(zombie);
+    });
+
+    // const zombieElement = document.createElement('img');
+    // zombieElement.setAttribute("class", "zombie");
+    // const random = Math.floor(Math.random() * (300 - 50 + 1) + 50);
+    // zombieElement.style.left =  + 'px';
+    // game.zombie[0].element = zombieElement;
+    // moveZombieToPlayer(game.zombie[0]);
+  }
+
   moveZombieToPlayer(zombie) {
-    const angle = calculateAngle(zombie.x - game.survivor.x, game.survivor.y - zombie.y);
-    
-    if(angle <= 90) {
-      while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
-        console.log("hello");
-        zombie.x += Math.abs(1 * Math.cos(angle));
-        zombie.y -= Math.abs(1 * Math.sin(angle));
-        zombie.style.left = zombie.x + 'px';
-        zombie.style.top = zombie.y + 'px';
-      }
-    } else if(angle <= 180) {
+    zombieMoveInterval = setInterval(() => {
+      const angle = calculateAngle(zombie.x - game.survivor.x, game.survivor.y - zombie.y);
+
+      if(angle <= 90) {
         while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
           console.log("hello");
-          zombie.x -= Math.abs(1 * Math.cos(angle));
+          zombie.x += Math.abs(1 * Math.cos(angle));
           zombie.y -= Math.abs(1 * Math.sin(angle));
           zombie.style.left = zombie.x + 'px';
           zombie.style.top = zombie.y + 'px';
         }
-    } else if(angle <= 270) {
+      } else if(angle <= 180) {
+          while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
+            console.log("hello");
+            zombie.x -= Math.abs(1 * Math.cos(angle));
+            zombie.y -= Math.abs(1 * Math.sin(angle));
+            zombie.style.left = zombie.x + 'px';
+            zombie.style.top = zombie.y + 'px';
+          }
+      } else if(angle <= 270) {
+          while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
+            console.log("hello");
+            zombie.x -= Math.abs(1 * Math.cos(angle));
+            zombie.y += Math.abs(1 * Math.sin(angle));
+            zombie.style.left = zombie.x + 'px';
+            zombie.style.top = zombie.y + 'px';
+          }
+      } else if(angle <= 360) {
         while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
           console.log("hello");
-          zombie.x -= Math.abs(1 * Math.cos(angle));
+          zombie.x += Math.abs(1 * Math.cos(angle));
           zombie.y += Math.abs(1 * Math.sin(angle));
           zombie.style.left = zombie.x + 'px';
           zombie.style.top = zombie.y + 'px';
         }
-    } else if(angle <= 360) {
-      while(zombie.x !== game.survivor.x && zombie.y !== game.survivor.y) {
-        console.log("hello");
-        zombie.x += Math.abs(1 * Math.cos(angle));
-        zombie.y += Math.abs(1 * Math.sin(angle));
-        zombie.style.left = zombie.x + 'px';
-        zombie.style.top = zombie.y + 'px';
-      }
-    } 
+      } 
+
+    }, 1000);
+  }
+
+  gameOver() {
+    clearInterval(zombieMoveInterval);
+    alert('Game over. you ded');
   }
 }
 
@@ -205,20 +278,13 @@ game.startGame();
 game.survivor.x = playerElement.offsetLeft;
 game.survivor.y = playerElement.offsetTop;
 
-game.zombies[0].x = zombieElement.offsetLeft;
-game.zombies[0].y = zombieElement.offsetTop;
+// game.zombies[0].x = zombieElement.offsetLeft;
+// game.zombies[0].y = zombieElement.offsetTop;
+
 
 /* --------- FUNCTIONS ------------ */
 
-// spawn zombieInRandomLocation but give a minimum distance of 50px away from player                                                                                                                                                                                                   
-function createZombie() {
-  const zombieElement = document.createElement('img');
-  zombieElement.setAttribute("class", "zombie");
-  const random = Math.floor(Math.random() * (300 - 50 + 1) + 50);
-  zombieElement.style.left =  + 'px';
-  // game.zombie[0].element = zombieElement;
-  // moveZombieToPlayer(game.zombie[0]);
-}
+// spawn zombieInRandomLocation but give a minimum distance of 50px away from player                                                                                                                                                 
 
 function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
   let angle =  Math.atan2(y, x) * 180 / Math.PI;
