@@ -14,6 +14,25 @@ const windowLimitY = $(document).height();
 
 /* ----------- functions ----------- */
 
+function movePlayer(event) {
+  let x = parseInt(player.offsetLeft);
+  let y = parseInt(player.offsetTop);
+  
+  if(event.key === 'ArrowDown' || event.key === 's') {
+    y += 5;
+    player.style.top = y + 'px';
+  } else if (event.key === "ArrowUp" || event.key === 'w') {
+    y -= 5;
+    player.style.top = y + 'px';
+  } else if (event.key === "ArrowLeft" || event.key === 'a') {
+    x -= 5;
+    player.style.left = x + 'px';
+  } else if (event.key === "ArrowRight" || event.key === 'd') {
+    x += 5;
+    player.style.left = x + 'px';
+  }
+}
+
 function createBulletElement() {
   const x = parseInt(player.offsetLeft);
   const y = parseInt(player.offsetTop);
@@ -105,3 +124,5 @@ function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
 /* ------ event listeners ----- */
 
 window.addEventListener("mousedown", () => fireBullet(event));
+
+window.addEventListener('keydown', () => movePlayer(event));
