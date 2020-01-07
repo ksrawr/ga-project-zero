@@ -33,10 +33,14 @@ function fireBullet(event) {
 
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
-  moveBullet(bullet, angle);
+
+  const speed = 50;
+  const dx = speed * Math.abs(Math.cos(angle));
+  const dy = speed * Math.abs(Math.sin(angle));
+  moveBullet(bullet, dx, dy);
 }
 
-function moveBullet(bullet, angle) {
+function moveBullet(bullet, dx, dy) {
   // let moveBulletInterval = setInterval(() => {
   //   let bulletX = parseInt(bullet.style.left);
   //   let bulletY = parseInt(bullet.style.top);
@@ -70,14 +74,14 @@ function moveBullet(bullet, angle) {
   
   // test just go straight across
   let bulletMoveInterval = setInterval(() => {
-    let bulletX = parseInt(bullet.style.left)
-    
-    if (bulletX === 340) {
-      bullet.remove()
+    let bulletX = parseInt(bullet.style.left);
+    console.log(dx);
+    if (bulletX === windowLimitX) {
+      bullet.remove();
     } else {
-      bullet.style.left = `${bulletX + Math.abs(10 * Math.cos(angle))}px`
+      bullet.style.left = `${bulletX + dx}px`;
     }
-  }, 10)
+  }, 60);
 }
 
 function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
