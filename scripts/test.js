@@ -57,7 +57,7 @@ function fireBullet(event) {
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
 
-  const speed = 0.5 / 2;
+  const speed = 100;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
   moveBullet(bullet, angle, dx, dy);
@@ -109,7 +109,7 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.top = `${bulletY + dy}px`;
       }
     }
-  }, 100);
+  }, 60);
 }
 
 function calculateAngle(x, y) {
@@ -145,7 +145,7 @@ function findZombieCoordinates(zombie) {
   const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
   console.log(angle);
 
-  const speed = 100;
+  const speed = 10;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
 
@@ -197,7 +197,7 @@ function moveZombie(zombie, angle, dx, dy) {
         zombie.style.top = `${zombieY + dy}px`;
       }
     }
-  }, 1000);
+  }, 500);
 }
 
 /* ------ event listeners ----- */
