@@ -4,20 +4,19 @@ const player = document.getElementById('player');
 player.style.left = "50%";
 player.style.top = "50%";
 
-const playerX = player.offsetLeft;
-const playerY = player.offsetTop;
-
 const main = document.querySelector('main');
 
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
+
+const zombieSpawnPoints = [{'x':0,'y':0},{'x':windowLimitX,'y':0},{'x':0,'y':windowLimitY},{'x':windowLimitX,'y':windowLimitY}];
 
 /* ----------- functions ----------- */
 
 function movePlayer(event) {
   let x = parseInt(player.offsetLeft);
   let y = parseInt(player.offsetTop);
-  
+
   if(event.key === 'ArrowDown' || event.key === 's') {
     y += 5;
     player.style.top = y + 'px';
@@ -46,9 +45,6 @@ function createBulletElement() {
 }
 
 function fireBullet(event) {
-  // const x = parseInt(window.getComputedStyle(player).getPropertyValue('left'));
-  // const y = parseInt(window.getComputedStyle(player).getPropertyValue('top'));
-
   const x = parseInt(player.offsetLeft);
   const y = parseInt(player.offsetTop);
 
@@ -119,6 +115,33 @@ function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
   // angle = 360 - angle;
 
   return angle;
+}
+
+function createZombie() {
+  const zombie = document.createElement('img');
+  zombie.classList.add('zombie');
+  const random = Math.floor(Math.random() * spawnPoints.length);
+
+  // testing for now
+  zombie.style.left = `0px`;
+  zombie.style.top = `0px`;
+
+  main.insertAdjacentElement('beforeend', zombie);
+
+  spawnZombie(zombie);
+}
+
+function spawnZombie(zombie) {
+  const zombieX = parseInt(zombie.style.left);
+  const zombieY = parseInt(zombie.style.top);
+
+  const playerX = parseInt(player.offsetLeft);
+  const playerY = parseInt(player.offsetTop);
+
+  const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
+  console.log(angle);
+
+  
 }
 
 /* ------ event listeners ----- */
