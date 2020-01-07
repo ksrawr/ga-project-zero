@@ -72,7 +72,7 @@ function moveBullet(bullet, angle) {
   let bulletMoveInterval = setInterval(() => {
     let bulletX = parseInt(bullet.style.left)
     
-    if (xPosition === 340) {
+    if (bulletX === 340) {
       bullet.remove()
     } else {
       bullet.style.left = `${bulletX + Math.abs(10 * Math.cos(angle))}px`
