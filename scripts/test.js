@@ -79,6 +79,7 @@ function moveBullet(bullet, angle, dx, dy) {
     if(angle <= 90) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
+        clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX + dx}px`;
         bullet.style.top = `${bulletY - dy}px`;
@@ -86,6 +87,7 @@ function moveBullet(bullet, angle, dx, dy) {
     } else if (angle <= 180) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
+        clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX - dx}px`;
         bullet.style.top = `${bulletY - dy}px`;
@@ -93,6 +95,7 @@ function moveBullet(bullet, angle, dx, dy) {
     } else if (angle <= 270) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
+        clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX - dx}px`;
         bullet.style.top = `${bulletY + dy}px`;
@@ -100,6 +103,7 @@ function moveBullet(bullet, angle, dx, dy) {
     } else if (angle <= 360) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
+        clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX + dx}px`;
         bullet.style.top = `${bulletY + dy}px`;
@@ -120,7 +124,7 @@ function calculateAngle(x, y) {
 function createZombie() {
   const zombie = document.createElement('img');
   zombie.classList.add('zombie');
-  const random = Math.floor(Math.random() * spawnPoints.length);
+  const random = Math.floor(Math.random() * zombieSpawnPoints.length);
 
   // testing for now
   zombie.style.left = `0px`;
@@ -141,7 +145,7 @@ function findZombieCoordinates(zombie) {
   const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
   console.log(angle);
 
-  const speed = 10;
+  const speed = 5;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
 
@@ -155,14 +159,43 @@ function moveZombie(zombie, angle, dx, dy) {
 
     console.log('zmove');
 
-    const windowLimitX = $(document).width();
-
     /* test just go straight across */
     if (zombieX === windowLimitX) {
       zombie.remove();
+      clearInterval(zombieMoveInterval);
     } else {
       zombie.style.left = `${zombieX + dx}px`;
     }
+
+    // if(angle <= 90) {
+    //   if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+    //     zombie.remove();
+    //   } else {
+    //     zombie.style.left = `${zombieX + dx}px`;
+    //     zombie.style.top = `${zombieY - dy}px`;
+    //   }
+    // } else if (angle <= 180) {
+    //   if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+    //     zombie.remove();
+    //   } else {
+    //     zombie.style.left = `${zombieX - dx}px`;
+    //     zombie.style.top = `${zombieY - dy}px`;
+    //   }
+    // } else if (angle <= 270) {
+    //   if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+    //     zombie.remove();
+    //   } else {
+    //     zombie.style.left = `${zombieX - dx}px`;
+    //     zombie.style.top = `${zombieY + dy}px`;
+    //   }
+    // } else if (angle <= 360) {
+    //   if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+    //     zombie.remove();
+    //   } else {
+    //     zombie.style.left = `${zombieX + dx}px`;
+    //     zombie.style.top = `${zombieY + dy}px`;
+    //   }
+    // }
   }, 60);
 }
 
