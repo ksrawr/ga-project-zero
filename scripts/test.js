@@ -1,6 +1,11 @@
 /* ---------- constants ----------- */
 
 const player = document.getElementById('player');
+player.style.left = "50%";
+player.style.top = "50%";
+
+const playerX = player.offsetLeft;
+const playerY = player.offsetTop;
 
 const main = document.querySelector('main');
 
@@ -10,8 +15,8 @@ const windowLimitY = $(document).height();
 /* ----------- functions ----------- */
 
 function createBulletElement() {
-  const x = parseInt(window.getComputedStyle(player).getPropertyValue('left'));
-  const y = parseInt(window.getComputedStyle(player).getPropertyValue('top'));
+  const x = parseInt(player.offsetLeft);
+  const y = parseInt(player.offsetTop);
 
   let bulletElement = document.createElement('div');
   bulletElement.classList.add('bullet');
@@ -22,8 +27,11 @@ function createBulletElement() {
 }
 
 function fireBullet(event) {
-  const x = parseInt(window.getComputedStyle(player).getPropertyValue('left'));
-  const y = parseInt(window.getComputedStyle(player).getPropertyValue('top'));
+  // const x = parseInt(window.getComputedStyle(player).getPropertyValue('left'));
+  // const y = parseInt(window.getComputedStyle(player).getPropertyValue('top'));
+
+  const x = parseInt(player.offsetLeft);
+  const y = parseInt(player.offsetTop);
 
   const mouseClickedX = event.clientX;
   const mouseClickedY = event.clientY;
@@ -37,10 +45,10 @@ function fireBullet(event) {
   const speed = 50;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
-  moveBullet(bullet, dx, dy);
+  moveBullet(bullet, angle, dx, dy);
 }
 
-function moveBullet(bullet, dx, dy) {
+function moveBullet(bullet, angle, dx, dy) {
   // let moveBulletInterval = setInterval(() => {
   //   let bulletX = parseInt(bullet.style.left);
   //   let bulletY = parseInt(bullet.style.top);
@@ -75,11 +83,21 @@ function moveBullet(bullet, dx, dy) {
   // test just go straight across
   let bulletMoveInterval = setInterval(() => {
     let bulletX = parseInt(bullet.style.left);
-    console.log(dx);
-    if (bulletX === windowLimitX) {
-      bullet.remove();
-    } else {
-      bullet.style.left = `${bulletX + dx}px`;
+    let bulletY = parseInt(bullet.style.top);
+    console.log("hi");
+    // if (bulletX === windowLimitX) {
+    //   bullet.remove();
+    // } else {
+    //   bullet.style.left = `${bulletX + dx}px`;
+    // }
+    if(angle <= 90) {
+      if(bulletX === 0 || bulletX === windowLimitX || bullet )
+    } else if (angle <= 180) {
+
+    } else if (angle <= 270) {
+
+    } else if (angle <= 360) {
+
     }
   }, 60);
 }

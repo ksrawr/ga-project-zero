@@ -414,6 +414,7 @@ class Game {
     console.log(survivorLeft);
     console.log(survivorTop);
 
+    // collision detection should happen for value in between (left and right) AND (top and bottom)
     if(zombieRight <= survivorLeft || zombieLeft >= survivorRight) {
       if(zombieTop >= survivorTop && zombieTop >= survivorBottom) {
         console.log("Collides");
