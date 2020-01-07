@@ -42,62 +42,53 @@ function fireBullet(event) {
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
 
-  const speed = 50;
+  const speed = 100;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
   moveBullet(bullet, angle, dx, dy);
 }
 
 function moveBullet(bullet, angle, dx, dy) {
-  // let moveBulletInterval = setInterval(() => {
-  //   let bulletX = parseInt(bullet.style.left);
-  //   let bulletY = parseInt(bullet.style.top);
-
-  //   console.log(bulletX);
-  //   if(angle <= 90) {
-  //     if(bulletX < windowLimitX && windowLimitY > bulletY && bulletX > 0 && bulletY > 0) {
-  //       console.log('update');
-  //       bullet.style.left = `${bulletX + (Math.abs(1 * Math.cos(angle)))}px`;
-  //       bullet.style.top = `${bulletY - (Math.abs(1 * Math.sin(angle)))}px`;
-  //     } else {
-  //       bullet.remove();
-  //     }
-  //   } else if (angle <= 180) {
-
-  //   } else if (angle <= 270) {
-
-  //   } else if( angle <= 360) {
-  //     console.log()
-  //     // if(bulletX < windowLimitX && windowLimitY > bulletY && bulletX > 0 && bulletY > 0) {
-  //     //   bullet.style.left = `${bulletX + (Math.abs(1 * Math.cos(angle)))}px`;
-  //     //   bullet.style.top = `${bulletY + (Math.abs(1 * Math.sin(angle)))}px`;
-  //     // }
-  //     if(bulletX === windowLimitX) {
-  //       bullet.remove();
-  //     }
-  //     bullet.style.left = `${bulletX + (Math.abs(1 * Math.cos(angle)))}px`;
-  //     bullet.style.top = `${bulletY + (Math.abs(1 * Math.sin(angle)))}px`;
-  //   }
-  // }, 10);
-  
-  // test just go straight across
   let bulletMoveInterval = setInterval(() => {
     let bulletX = parseInt(bullet.style.left);
     let bulletY = parseInt(bullet.style.top);
     console.log("hi");
+
+    /* test just go straight across */
     // if (bulletX === windowLimitX) {
     //   bullet.remove();
     // } else {
     //   bullet.style.left = `${bulletX + dx}px`;
     // }
+
     if(angle <= 90) {
-      if(bulletX === 0 || bulletX === windowLimitX || bullet )
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+      } else {
+        bullet.style.left = `${bulletX + dx}px`;
+        bullet.style.top = `${bulletY - dy}px`;
+      }
     } else if (angle <= 180) {
-
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+      } else {
+        bullet.style.left = `${bulletX - dx}px`;
+        bullet.style.top = `${bulletY - dy}px`;
+      }
     } else if (angle <= 270) {
-
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+      } else {
+        bullet.style.left = `${bulletX - dx}px`;
+        bullet.style.top = `${bulletY + dy}px`;
+      }
     } else if (angle <= 360) {
-
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+      } else {
+        bullet.style.left = `${bulletX + dx}px`;
+        bullet.style.top = `${bulletY + dy}px`;
+      }
     }
   }, 60);
 }
