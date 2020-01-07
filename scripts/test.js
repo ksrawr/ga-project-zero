@@ -132,32 +132,29 @@ function createZombie() {
 
   main.insertAdjacentElement('beforeend', zombie);
 
-  findZombieCoordinates(zombie);
+  moveZombie(zombie);
 }
 
-function findZombieCoordinates(zombie) {
-  const zombieX = parseInt(zombie.style.left);
-  const zombieY = parseInt(zombie.style.top);
-
-  const playerX = parseInt(player.offsetLeft);
-  const playerY = parseInt(player.offsetTop);
-
-  const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
-  console.log(angle);
-
-  const speed = 10;
-  const dx = speed * Math.abs(Math.cos(angle));
-  const dy = speed * Math.abs(Math.sin(angle));
-
-  moveZombie(zombie, angle, dx, dy);
-}
-
-function moveZombie(zombie, angle, dx, dy) {
+function moveZombie(zombie) {
   let zombieMoveInterval = setInterval(() => {
     const zombieX = parseInt(zombie.style.left);
     const zombieY = parseInt(zombie.style.top);
 
+    const playerX = parseInt(player.offsetLeft);
+    const playerY = parseInt(player.offsetTop);
+
+    const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
+    console.log(angle);
+
+    const speed = 10;
+    const dx = speed * Math.abs(Math.cos(angle));
+    const dy = speed * Math.abs(Math.sin(angle));
+
     console.log('zmove');
+
+    if(checkZombiePlayerCollision(zombie)) {
+      alert("Game Over");
+    }
 
     /* test just go straight across */
     // if (zombieX === windowLimitX) {
@@ -198,6 +195,40 @@ function moveZombie(zombie, angle, dx, dy) {
       }
     }
   }, 500);
+}
+
+function checkZombiePlayerCollision(zombie) {
+  const zombieLeft = parseInt(zombie.style.left);
+  const zombieTop = parseInt(zombie.style.top);
+  const zombieBottom = zombieTop + 80;
+  const zombieRight = zombieLeft + 41;
+
+  console.log(zombieTop);
+
+  const playerLeft = parseInt(player.offsetLeft);
+  const playerTop = parseInt(player.offsetTop);
+  const playerBottom = playerTop + 48;
+  const playerRight = playerLeft + 51;
+
+  if (playerLeft <= zombieRight && zombieRight <= playerRight) {
+    console.log('kiss');
+    if(playerTop <= zombieBottom && zombieBottom <= playerBottom){
+      return true;
+    } else if(playerTop <= zombieTop && zombieTop <= playerBottom) {
+      return true;
+    }
+    return false;
+  }
+
+  if(playerLeft <= zombieLeft && zombieLeft <= playerRight) {
+    if(playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+      return true;
+    } else if(playerTop <= zombieTop &&zombieTop <= playerBottom) {
+      return true;
+    }
+    return false;
+  }
+  return false;
 }
 
 /* ------ event listeners ----- */
