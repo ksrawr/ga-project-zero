@@ -108,7 +108,7 @@ function moveBullet(bullet, angle, dx, dy) {
   }, 60);
 }
 
-function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
+function calculateAngle(x, y) {
   let angle =  Math.atan2(y, x) * 180 / Math.PI;
 
   angle = (angle + 360) % 360;
@@ -128,10 +128,10 @@ function createZombie() {
 
   main.insertAdjacentElement('beforeend', zombie);
 
-  spawnZombie(zombie);
+  findZombieCoordinates(zombie);
 }
 
-function spawnZombie(zombie) {
+function findZombieCoordinates(zombie) {
   const zombieX = parseInt(zombie.style.left);
   const zombieY = parseInt(zombie.style.top);
 
@@ -141,7 +141,29 @@ function spawnZombie(zombie) {
   const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
   console.log(angle);
 
-  
+  const speed = 10;
+  const dx = speed * Math.abs(Math.cos(angle));
+  const dy = speed * Math.abs(Math.sin(angle));
+
+  moveZombie(zombie, angle, dx, dy);
+}
+
+function moveZombie(zombie, angle, dx, dy) {
+  let zombieMoveInterval = setInterval(() => {
+    const zombieX = parseInt(zombie.style.left);
+    const zombieY = parseInt(zombie.style.top);
+
+    console.log('zmove');
+
+    const windowLimitX = $(document).width();
+
+    /* test just go straight across */
+    if (zombieX === windowLimitX) {
+      zombie.remove();
+    } else {
+      zombie.style.left = `${zombieX + dx}px`;
+    }
+  }, 60);
 }
 
 /* ------ event listeners ----- */
