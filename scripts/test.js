@@ -14,7 +14,7 @@ const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
 
 scoreDisplay.style.left = `${windowLimitX - 100}px`;
-scoreDisplay.style.top = `0px`
+scoreDisplay.style.top = `0px`;
 
 const zombieSpawnPoints = [
   {'x':0,'y':0},
@@ -248,6 +248,7 @@ function moveZombie(zombie) {
     console.log('zmove');
 
     if(checkZombiePlayerCollision(zombie)) {
+      clearInterval(zombieSpawnInterval);
       alert(`Game Over. Score: ${score}`);
     }
 

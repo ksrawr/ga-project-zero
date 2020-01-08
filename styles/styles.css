@@ -64,7 +64,7 @@ main p {
   display: block;
   font-size: 16px;
   position: absolute;
-  /* z-index: 2; */
+  z-index: 2;
 }
 
 #player {
