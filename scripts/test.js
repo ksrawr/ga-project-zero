@@ -9,7 +9,16 @@ const main = document.querySelector('main');
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
 
-const zombieSpawnPoints = [{'x':0,'y':0},{'x':windowLimitX-100,'y':0},{'x':0,'y':windowLimitY-100},{'x':windowLimitX-100,'y':windowLimitY-100}];
+const zombieSpawnPoints = [
+  {'x':0,'y':0},
+  {'x':windowLimitX-100,'y':0},
+  {'x':0,'y':windowLimitY-100},
+  {'x':windowLimitX-100,'y':windowLimitY-100},
+  {'x':windowLimitX/2,'y':0},
+  {'x':0,'y':windowLimitY/2},
+  {'x':windowLimitX/2,'y':windowLimitY},
+  {'x':windowLimitX, 'y': windowLimitY/2}
+];
 
 let zombieSpawnInterval;
 let zombieSpeed = 10;
@@ -24,15 +33,19 @@ function movePlayer(event) {
   if(event.key === 'ArrowDown' || event.key === 's') {
     y += 5;
     player.style.top = y + 'px';
+    player.style.background = 'url(./images/AH-People1.png) -46px 0';
   } else if (event.key === "ArrowUp" || event.key === 'w') {
     y -= 5;
     player.style.top = y + 'px';
+    player.style.background = 'url(./images/AH-People1.png) -46px -144px';
   } else if (event.key === "ArrowLeft" || event.key === 'a') {
     x -= 5;
     player.style.left = x + 'px';
+    player.style.background = 'url(./images/AH-People1.png) -46px -48px'
   } else if (event.key === "ArrowRight" || event.key === 'd') {
     x += 5;
     player.style.left = x + 'px';
+    player.style.background = 'url(./images/AH-People1.png) -46px -96px';
   }
 }
 
@@ -166,7 +179,7 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.top = `${bulletY + dy}px`;
       }
     }
-  }, 500);
+  }, 60);
 }
 
 function calculateAngle(x, y) {
@@ -349,9 +362,37 @@ function checkBulletCollision(bullet, zombie) {
   return false;
 }
 
+function createLoot(x, y) {
+  const loot = document.createElement('img');
+  loot.classList.add('loot');
+  loot.style.left = `${x}px`;
+  loot.style.top = `${y}px`;
+
+  return loot;
+}
+
+function checkLastZombie() {
+  let zombieLength = document.querySelectorAll('.zombie');
+  if(zombieLength.length <= 1) {
+    return true;
+  }
+}
+
+function increaseZombieCount() {
+  zombieCount = zombieCount * 2;
+}
+
 function startGame() {
-  let zombieSpawnInterval = setInterval(() => {
+  for(let i = 0; i < 2; i++) {
     createZombie();
+  }
+  let zombieSpawnInterval = setInterval(() => {
+    if(checkLastZombie()) {
+      increaseZombieCount();
+      for(let i = 0; i <= zombieCount; i++) {
+        createZombie();
+      }
+    }
   }, 5000);
 }
 
@@ -361,4 +402,4 @@ window.addEventListener("mousedown", () => fireBullet(event));
 
 window.addEventListener('keydown', () => movePlayer(event));
 
-startGame();
+// startGame();
