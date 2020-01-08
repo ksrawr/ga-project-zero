@@ -248,7 +248,7 @@ function moveZombie(zombie) {
     console.log('zmove');
 
     if(checkZombiePlayerCollision(zombie)) {
-      alert("Game Over");
+      alert(`Game Over. Score: ${score}`);
     }
 
     let bullets = document.querySelectorAll('.bullet');
