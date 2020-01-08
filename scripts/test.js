@@ -9,7 +9,7 @@ const main = document.querySelector('main');
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
 
-const zombieSpawnPoints = [{'x':0,'y':0},{'x':windowLimitX,'y':0},{'x':0,'y':windowLimitY},{'x':windowLimitX,'y':windowLimitY}];
+const zombieSpawnPoints = [{'x':0,'y':0},{'x':windowLimitX-100,'y':0},{'x':0,'y':windowLimitY-100},{'x':windowLimitX-100,'y':windowLimitY-100}];
 
 /* ----------- functions ----------- */
 
@@ -69,6 +69,14 @@ function moveBullet(bullet, angle, dx, dy) {
     let bulletY = parseInt(bullet.style.top);
     console.log("hi");
 
+    /* check for collision with zombies */
+    let zombies = document.querySelectorAll('.zombie');
+    zombies.forEach((zombie) => {
+      if(checkBulletCollision(zombie, bullet)) {
+        zombie.remove();
+      }
+    });
+
     /* test just go straight across */
     // if (bulletX === windowLimitX) {
     //   bullet.remove();
@@ -109,7 +117,7 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.top = `${bulletY + dy}px`;
       }
     }
-  }, 60);
+  }, 1000);
 }
 
 function calculateAngle(x, y) {
@@ -127,8 +135,8 @@ function createZombie() {
   const random = Math.floor(Math.random() * zombieSpawnPoints.length);
 
   // testing for now
-  zombie.style.left = `0px`;
-  zombie.style.top = `0px`;
+  zombie.style.left = `${0}px`;
+  zombie.style.top = `${windowLimitY - 100}px`;
 
   main.insertAdjacentElement('beforeend', zombie);
 
@@ -166,21 +174,21 @@ function moveZombie(zombie) {
 
     /* Reminder spawn points for zombies are the edges of the map */
     if(angle <= 90) {
-      if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+      if(zombieX === windowLimitX || zombieY === windowLimitY ) {
         zombie.remove();
       } else {
         zombie.style.left = `${zombieX + dx}px`;
         zombie.style.top = `${zombieY - dy}px`;
       }
     } else if (angle <= 180) {
-      if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+      if( zombieX === windowLimitX || zombieY === windowLimitY ) {
         zombie.remove();
       } else {
         zombie.style.left = `${zombieX - dx}px`;
         zombie.style.top = `${zombieY - dy}px`;
       }
     } else if (angle <= 270) {
-      if(zombieX === 0 || zombieX === windowLimitX || zombieY === 0 || zombieY === windowLimitY ) {
+      if(zombieX === windowLimitX || zombieY === windowLimitY ) {
         zombie.remove();
       } else {
         zombie.style.left = `${zombieX - dx}px`;
@@ -203,21 +211,18 @@ function checkZombiePlayerCollision(zombie) {
   const zombieBottom = zombieTop + 80;
   const zombieRight = zombieLeft + 41;
 
-  console.log(zombieTop);
-
   const playerLeft = parseInt(player.offsetLeft);
   const playerTop = parseInt(player.offsetTop);
   const playerBottom = playerTop + 48;
   const playerRight = playerLeft + 51;
-
+  
   if (playerLeft <= zombieRight && zombieRight <= playerRight) {
-    console.log('kiss');
     if(playerTop <= zombieBottom && zombieBottom <= playerBottom){
       return true;
     } else if(playerTop <= zombieTop && zombieTop <= playerBottom) {
       return true;
     }
-    return false;
+    return true;
   }
 
   if(playerLeft <= zombieLeft && zombieLeft <= playerRight) {
@@ -226,7 +231,38 @@ function checkZombiePlayerCollision(zombie) {
     } else if(playerTop <= zombieTop &&zombieTop <= playerBottom) {
       return true;
     }
-    return false;
+    return true;
+  }
+  return false;
+}
+
+function checkBulletCollision(bullet, zombie) {
+  const zombieLeft = parseInt(zombie.style.left);
+  const zombieTop = parseInt(zombie.style.top);
+  const zombieBottom = zombieTop + 80;
+  const zombieRight = zombieLeft + 41;
+
+  const bulletLeft = parseInt(bullet.style.left);
+  const bulletTop = parseInt(bullet.style.top);
+  const bulletBottom = bulletTop + 20;
+  const bulletRight = bulletLeft + 20;
+
+  if (bulletLeft <= zombieRight && zombieRight <= bulletRight) {
+    if(bulletTop <= zombieBottom && zombieBottom <= bulletBottom){
+      return true;
+    } else if(bulletTop <= zombieTop && zombieTop <= bulletBottom) {
+      return true;
+    }
+    return true;
+  }
+
+  if(bulletLeft <= zombieLeft && zombieLeft <= bulletRight) {
+    if(bulletTop <= zombieBottom && zombieBottom <= bulletBottom) {
+      return true;
+    } else if(bulletTop <= zombieTop &&zombieTop <= bulletBottom) {
+      return true;
+    }
+    return true;
   }
   return false;
 }
