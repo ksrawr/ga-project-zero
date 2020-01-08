@@ -179,7 +179,8 @@ function createZombie() {
   const random = Math.floor(Math.random() * zombieSpawnPoints.length);
 
   // testing for now
-  zombie.style.left = `${0}px`;
+  zombie.style.left = `${windowLimitX - 100}px`;
+  // zombie.style.top = `${windowLimitY - 100}px`;
   zombie.style.top = `${windowLimitY - 100}px`;
 
   main.insertAdjacentElement('beforeend', zombie);
@@ -260,21 +261,31 @@ function checkZombiePlayerCollision(zombie) {
   const playerBottom = playerTop + 48;
   const playerRight = playerLeft + 51;
   
-  if (playerLeft <= zombieRight && zombieRight <= playerRight) {
-    if(playerTop <= zombieBottom && zombieBottom <= playerBottom){
-      return true;
-    } else if(playerTop <= zombieTop && zombieTop <= playerBottom) {
-      return true;
-    }
-    return true;
-  }
+  // if (playerLeft <= zombieRight && zombieRight <= playerRight) {
+  //   if(playerTop <= zombieBottom && zombieBottom <= playerBottom){
+  //     return true;
+  //   } else if(playerTop <= zombieTop && zombieTop <= playerBottom) {
+  //     return true;
+  //   }
+  //   return true;
+  // }
 
-  if(playerLeft <= zombieLeft && zombieLeft <= playerRight) {
-    if(playerTop <= zombieBottom && zombieBottom <= playerBottom) {
-      return true;
-    } else if(playerTop <= zombieTop &&zombieTop <= playerBottom) {
-      return true;
-    }
+  // if(playerLeft <= zombieLeft && zombieLeft <= playerRight) {
+  //   if(playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+  //     return true;
+  //   } else if(playerTop <= zombieTop &&zombieTop <= playerBottom) {
+  //     return true;
+  //   }
+  //   return true;
+  // }
+  
+  if(playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+    return true;
+  } else if (playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieTop && zombieTop <= playerBottom) {
+    return true;
+  } else if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+    return true;
+  } else if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieTop &&zombieTop <= playerBottom) {
     return true;
   }
   return false;
@@ -317,3 +328,4 @@ window.addEventListener("mousedown", () => fireBullet(event));
 
 window.addEventListener('keydown', () => movePlayer(event));
 
+// createZombie();
