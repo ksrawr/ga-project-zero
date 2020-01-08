@@ -11,6 +11,10 @@ const windowLimitY = $(document).height();
 
 const zombieSpawnPoints = [{'x':0,'y':0},{'x':windowLimitX-100,'y':0},{'x':0,'y':windowLimitY-100},{'x':windowLimitX-100,'y':windowLimitY-100}];
 
+let zombieSpawnInterval;
+let zombieSpeed = 10;
+let zombieCount = 10;
+
 /* ----------- functions ----------- */
 
 function movePlayer(event) {
@@ -33,20 +37,20 @@ function movePlayer(event) {
 }
 
 function createBulletElement() {
-  const x = parseInt(player.offsetLeft);
-  const y = parseInt(player.offsetTop);
+  const x = parseInt(player.offsetLeft) + (51 / 2);
+  const y = parseInt(player.offsetTop) + (48 / 2);
 
   let bulletElement = document.createElement('div');
   bulletElement.classList.add('bullet');
-  bulletElement.style.left = `${x + 10}px`;
-  bulletElement.style.top = `${y + 10}px`;
+  bulletElement.style.left = `${x}px`;
+  bulletElement.style.top = `${y}px`;
   
   return bulletElement;
 }
 
 function fireBullet(event) {
-  const x = parseInt(player.offsetLeft);
-  const y = parseInt(player.offsetTop);
+  const x = parseInt(player.offsetLeft) + (48 / 2);
+  const y = parseInt(player.offsetTop) + (51 / 2);
 
   const mouseClickedX = event.clientX;
   const mouseClickedY = event.clientY;
@@ -74,6 +78,7 @@ function moveBullet(bullet, angle, dx, dy) {
     zombies.forEach((zombie) => {
       if(checkBulletCollision(zombie, bullet)) {
         zombie.remove();
+        bullet.remove();
       }
     });
 
@@ -161,7 +166,7 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.top = `${bulletY + dy}px`;
       }
     }
-  }, 1000);
+  }, 500);
 }
 
 function calculateAngle(x, y) {
@@ -179,9 +184,11 @@ function createZombie() {
   const random = Math.floor(Math.random() * zombieSpawnPoints.length);
 
   // testing for now
-  zombie.style.left = `${windowLimitX - 100}px`;
+  // zombie.style.left = `${windowLimitX - 100}px`;
   // zombie.style.top = `${windowLimitY - 100}px`;
-  zombie.style.top = `${windowLimitY - 100}px`;
+
+  zombie.style.left = `${zombieSpawnPoints[random].x}px`;
+  zombie.style.top = `${zombieSpawnPoints[random].y}px`;
 
   main.insertAdjacentElement('beforeend', zombie);
 
@@ -199,7 +206,8 @@ function moveZombie(zombie) {
     const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
     console.log(angle);
 
-    const speed = 10;
+    // const speed = 10;
+    const speed = 30;
     const dx = speed * Math.abs(Math.cos(angle));
     const dy = speed * Math.abs(Math.sin(angle));
 
@@ -208,6 +216,14 @@ function moveZombie(zombie) {
     if(checkZombiePlayerCollision(zombie)) {
       alert("Game Over");
     }
+
+    let bullets = document.querySelectorAll('.bullet');
+    bullets.forEach((bullet) => {
+      if(checkBulletCollision(zombie, bullet)){
+        bullet.remove();
+        zombie.remove();
+      }
+    });
 
     /* test just go straight across */
     // if (zombieX === windowLimitX) {
@@ -278,14 +294,17 @@ function checkZombiePlayerCollision(zombie) {
   //   }
   //   return true;
   // }
-  
+
   if(playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
     return true;
-  } else if (playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieTop && zombieTop <= playerBottom) {
+  } 
+  if (playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieTop && zombieTop <= playerBottom) {
     return true;
-  } else if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+  } 
+  if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
     return true;
-  } else if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieTop &&zombieTop <= playerBottom) {
+  }
+  if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieTop &&zombieTop <= playerBottom) {
     return true;
   }
   return false;
@@ -308,7 +327,6 @@ function checkBulletCollision(bullet, zombie) {
     } else if(bulletTop <= zombieTop && zombieTop <= bulletBottom) {
       return true;
     }
-    return true;
   }
 
   if(bulletLeft <= zombieLeft && zombieLeft <= bulletRight) {
@@ -317,9 +335,24 @@ function checkBulletCollision(bullet, zombie) {
     } else if(bulletTop <= zombieTop &&zombieTop <= bulletBottom) {
       return true;
     }
+  }
+
+  if(bulletLeft <= zombieRight && zombieRight <= bulletRight && bulletTop <= zombieBottom && zombieBottom <= bulletBottom) {
+    return true;
+  } else if (bulletLeft <= zombieRight && zombieRight <= bulletRight && bulletTop <= zombieTop && zombieTop <= bulletBottom) {
+    return true;
+  } else if (bulletLeft <= zombieLeft && zombieLeft <= bulletRight && bulletTop <= zombieBottom && zombieBottom <= bulletBottom) {
+    return true;
+  } else if (bulletLeft <= zombieLeft && zombieLeft <= bulletRight && bulletTop <= zombieTop &&zombieTop <= bulletBottom) {
     return true;
   }
   return false;
+}
+
+function startGame() {
+  let zombieSpawnInterval = setInterval(() => {
+    createZombie();
+  }, 5000);
 }
 
 /* ------ event listeners ----- */
@@ -328,4 +361,4 @@ window.addEventListener("mousedown", () => fireBullet(event));
 
 window.addEventListener('keydown', () => movePlayer(event));
 
-// createZombie();
+startGame();
