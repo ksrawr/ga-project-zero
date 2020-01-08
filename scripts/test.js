@@ -7,6 +7,8 @@ player.style.top = "50%";
 const main = document.querySelector('main');
 
 const scoreDisplay = document.querySelector('.score');
+// player score
+let score = 0;
 
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
@@ -108,6 +110,8 @@ function moveBullet(bullet, angle, dx, dy) {
       if(checkBulletCollision(zombie, bullet)) {
         zombie.remove();
         bullet.remove();
+        score = score + 5;
+        scoreDisplay.textContent = `SCORE: ${score}`;
         clearInterval(bulletMoveInterval);
       }
     });
@@ -412,6 +416,8 @@ function startGame() {
         createZombie();
       }
     }
+    score++;
+    scoreDisplay.textContent = `SCORE: ${score}`;
   }, 5000);
 }
 
