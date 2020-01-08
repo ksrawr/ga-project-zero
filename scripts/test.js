@@ -83,8 +83,15 @@ function moveBullet(bullet, angle, dx, dy) {
     // } else {
     //   bullet.style.left = `${bulletX + dx}px`;
     // }
-
-    if(angle <= 90) {
+    if(angle <= 45) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX + (dx/2)}px`;
+        bullet.style.top = `${bulletY - (dy/2)}px`;
+      }
+    } else if(angle < 90) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
         clearInterval(bulletMoveInterval);
@@ -92,7 +99,22 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.left = `${bulletX + dx}px`;
         bullet.style.top = `${bulletY - dy}px`;
       }
-    } else if (angle <= 180) {
+    } else if (angle <= 110) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.top = `${bulletY - dy}px`;
+      }
+    } else if(angle < 135) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX - (dx/2)}px`;
+        bullet.style.top = `${bulletY - (dy/2)}px`;
+      }
+    } else if (angle < 180) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
         clearInterval(bulletMoveInterval);
@@ -100,12 +122,34 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.left = `${bulletX - dx}px`;
         bullet.style.top = `${bulletY - dy}px`;
       }
-    } else if (angle <= 270) {
+    } else if(angle <= 200) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
         clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX - dx}px`;
+      }
+    } else if (angle < 225) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX - (dx/2)}px`;
+        bullet.style.top = `${bulletY + (dy/2)}px`;
+      }
+    } else if (angle < 270) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX - dx}px`;
+        bullet.style.top = `${bulletY + dy}px`;
+      }
+    } else if (angle <= 290) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
         bullet.style.top = `${bulletY + dy}px`;
       }
     } else if (angle <= 360) {
