@@ -6,6 +6,8 @@ player.style.top = "50%";
 
 const main = document.querySelector('main');
 
+const scoreDisplay = document.querySelector('span');
+
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
 
@@ -23,6 +25,17 @@ const zombieSpawnPoints = [
 let zombieSpawnInterval;
 let zombieSpeed = 10;
 let zombieCount = 10;
+
+const lootBox = [
+  null,
+  null,
+  null,
+  null,
+  'loot-ftw',
+  'loot-nuke'
+];
+
+const startBtn = document.querySelector('button');
 
 /* ----------- functions ----------- */
 
@@ -92,6 +105,7 @@ function moveBullet(bullet, angle, dx, dy) {
       if(checkBulletCollision(zombie, bullet)) {
         zombie.remove();
         bullet.remove();
+        clearInterval(bulletMoveInterval);
       }
     });
 
@@ -235,6 +249,9 @@ function moveZombie(zombie) {
       if(checkBulletCollision(zombie, bullet)){
         bullet.remove();
         zombie.remove();
+        zombie.classList.remove('zombie');
+        zombie.classList.add('dead');
+        clearInterval(zombieMoveInterval);
       }
     });
 
@@ -280,6 +297,9 @@ function moveZombie(zombie) {
 }
 
 function checkZombiePlayerCollision(zombie) {
+  if(zombie.classList.contains('dead')) {
+    return false;
+  }
   const zombieLeft = parseInt(zombie.style.left);
   const zombieTop = parseInt(zombie.style.top);
   const zombieBottom = zombieTop + 80;
@@ -363,12 +383,17 @@ function checkBulletCollision(bullet, zombie) {
 }
 
 function createLoot(x, y) {
-  const loot = document.createElement('img');
-  loot.classList.add('loot');
-  loot.style.left = `${x}px`;
-  loot.style.top = `${y}px`;
+  const random = Math.floor(Math.random() * lootBox);
+  const className = lootBox[random];
+  if(className !== null) {
+    const loot = document.createElement('img');
+    loot.classList.add('loot');
+    loot.style.left = `${x}px`;
+    loot.style.top = `${y}px`;
 
-  return loot;
+    return loot;
+  }
+  return;
 }
 
 function checkLastZombie() {
@@ -383,6 +408,13 @@ function increaseZombieCount() {
 }
 
 function startGame() {
+  const header = document.querySelector('section');
+  header.style.display = 'none';
+
+  window.addEventListener("mousedown", () => fireBullet(event));
+
+  window.addEventListener('keydown', () => movePlayer(event));
+
   for(let i = 0; i < 2; i++) {
     createZombie();
   }
@@ -398,8 +430,9 @@ function startGame() {
 
 /* ------ event listeners ----- */
 
-window.addEventListener("mousedown", () => fireBullet(event));
+// window.addEventListener("mousedown", () => fireBullet(event));
 
-window.addEventListener('keydown', () => movePlayer(event));
+// window.addEventListener('keydown', () => movePlayer(event));
 
+startBtn.addEventListener('click', startGame);
 // startGame();
