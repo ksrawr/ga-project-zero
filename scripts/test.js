@@ -6,10 +6,13 @@ player.style.top = "50%";
 
 const main = document.querySelector('main');
 
-const scoreDisplay = document.querySelector('span');
+const scoreDisplay = document.querySelector('.score');
 
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
+
+scoreDisplay.style.left = `${windowLimitX - 100}px`;
+scoreDisplay.style.top = `0px`
 
 const zombieSpawnPoints = [
   {'x':0,'y':0},
@@ -265,33 +268,17 @@ function moveZombie(zombie) {
 
     /* Reminder spawn points for zombies are the edges of the map */
     if(angle <= 90) {
-      if(zombieX === windowLimitX || zombieY === windowLimitY ) {
-        zombie.remove();
-      } else {
         zombie.style.left = `${zombieX + dx}px`;
         zombie.style.top = `${zombieY - dy}px`;
-      }
     } else if (angle <= 180) {
-      if( zombieX === windowLimitX || zombieY === windowLimitY ) {
-        zombie.remove();
-      } else {
         zombie.style.left = `${zombieX - dx}px`;
         zombie.style.top = `${zombieY - dy}px`;
-      }
     } else if (angle <= 270) {
-      if(zombieX === windowLimitX || zombieY === windowLimitY ) {
-        zombie.remove();
-      } else {
         zombie.style.left = `${zombieX - dx}px`;
         zombie.style.top = `${zombieY + dy}px`;
-      }
     } else if (angle <= 360) {
-      if(zombieX === windowLimitX || zombieY === windowLimitY ) {
-        zombie.remove();
-      } else {
         zombie.style.left = `${zombieX + dx}px`;
         zombie.style.top = `${zombieY + dy}px`;
-      }
     }
   }, 500);
 }

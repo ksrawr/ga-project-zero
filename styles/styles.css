@@ -60,6 +60,13 @@ main {
   cursor: crosshair;
 }
 
+main p {
+  display: block;
+  font-size: 16px;
+  position: absolute;
+  /* z-index: 2; */
+}
+
 #player {
   width: 51px;
   height: 48px;
