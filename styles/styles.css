@@ -107,9 +107,16 @@ main p {
 }
 
 .nuked {
-  width: 100px;
-  height: 200px;
+  width: 130px;
+  height: 128px;
   position: absolute;
   background: url(../images/explosion-4.png) 0 0;
   z-index: 2;
+  animation: play 5s steps(12) infinite;
+}
+
+@keyframes play {
+  100% {
+    background-position: -1536px;
+  }
 }

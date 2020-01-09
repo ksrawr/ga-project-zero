@@ -41,7 +41,7 @@ const lootBox = [
   'loot-nuke'
 ];
 
-let time = 3;
+let time = 6;
 
 const startBtn = document.querySelector('button');
 
@@ -248,7 +248,7 @@ function moveZombie(zombie) {
     if(zombie.classList.contains('dead')) {
       zombie.remove();
     } else if(zombie.classList.contains('nuked')) {
-      
+      setTimer(zombie);
       return;
     }
 
@@ -482,16 +482,15 @@ function increaseZombieCount() {
   zombieCount = zombieCount * 2;
 }
 
-const setTimer = () => {
+const setTimer = (zombie) => {
   // function to run, time to wait to call function
   const timer = setInterval(() => {
     // used to stop setInterval
     if(time <= 0) {
+      zombie.remove();
       clearInterval(timer);
-      setUpRound();
       if(time >= 0) setTimer();
     }
-    updateTime();
     time--;
   }, 1000);
 }
@@ -506,19 +505,19 @@ function startGame() {
 
   window.addEventListener('keydown', () => movePlayer(event));
 
-  for(let i = 0; i < 2; i++) {
-    createZombie();
-  }
-  let zombieSpawnInterval = setInterval(() => {
-    if(checkLastZombie()) {
-      increaseZombieCount();
-      for(let i = 0; i <= zombieCount; i++) {
-        createZombie();
-      }
-    }
-    score = score + 5;
-    scoreDisplay.textContent = `SCORE: ${score}`;
-  }, 5000);
+  // for(let i = 0; i < 2; i++) {
+  //   createZombie();
+  // }
+  // let zombieSpawnInterval = setInterval(() => {
+  //   if(checkLastZombie()) {
+  //     increaseZombieCount();
+  //     for(let i = 0; i <= zombieCount; i++) {
+  //       createZombie();
+  //     }
+  //   }
+  //   score = score + 5;
+  //   scoreDisplay.textContent = `SCORE: ${score}`;
+  // }, 5000);
 }
 
 /* ------ event listeners ----- */
