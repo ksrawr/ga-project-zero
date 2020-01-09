@@ -15,6 +15,7 @@ const windowLimitY = $(document).height();
 
 scoreDisplay.style.left = `${windowLimitX - 100}px`;
 scoreDisplay.style.top = `0px`;
+scoreDisplay.style.display = 'none';
 
 const zombieSpawnPoints = [
   {'x':0,'y':0},
@@ -460,6 +461,8 @@ function increaseZombieCount() {
 function startGame() {
   const header = document.querySelector('section');
   header.style.display = 'none';
+
+  scoreDisplay.style.display = '';
 
   window.addEventListener("mousedown", () => fireBullet(event));
 
