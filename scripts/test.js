@@ -32,11 +32,11 @@ let zombieSpeed = 10;
 let zombieCount = 10;
 
 const lootBox = [
-  null,
-  null,
-  null,
-  null,
-  'loot-ftw',
+  // null,
+  // null,
+  // null,
+  // null,
+  // 'loot-ftw',
   'loot-nuke'
 ];
 
@@ -92,7 +92,7 @@ function fireBullet(event) {
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
 
-  const speed = 100;
+  const speed = 10;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
   moveBullet(bullet, angle, dx, dy);
@@ -108,10 +108,19 @@ function moveBullet(bullet, angle, dx, dy) {
     let zombies = document.querySelectorAll('.zombie');
     zombies.forEach((zombie) => {
       if(checkBulletCollision(zombie, bullet)) {
-        zombie.remove();
-        bullet.remove();
+        zombie.classList.remove('zombie');
+        zombie.classList.add('dead');
+
+        zombie.classList.add('loot-nuke');
+        const lootX = parseInt(zombie.style.left);
+        const lootY = parseInt(zombie.style.top);
+        const loot = createLoot(lootX,lootY);
+        main.insertAdjacentElement('beforeend', loot);
+
         score = score + 5;
         scoreDisplay.textContent = `SCORE: ${score}`;
+        zombie.remove();
+        bullet.remove();
         clearInterval(bulletMoveInterval);
       }
     });
@@ -200,7 +209,7 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.top = `${bulletY + dy}px`;
       }
     }
-  }, 60);
+  }, 500);
 }
 
 function calculateAngle(x, y) {
@@ -213,7 +222,7 @@ function calculateAngle(x, y) {
 }
 
 function createZombie() {
-  const zombie = document.createElement('img');
+  const zombie = document.createElement('div');
   zombie.classList.add('zombie');
   const random = Math.floor(Math.random() * zombieSpawnPoints.length);
 
@@ -375,17 +384,18 @@ function checkBulletCollision(bullet, zombie) {
 }
 
 function createLoot(x, y) {
+  console.log("we working");
   const random = Math.floor(Math.random() * lootBox);
-  const className = lootBox[random];
-  if(className !== null) {
-    const loot = document.createElement('img');
-    loot.classList.add('loot');
+  // const className = lootBox[random];
+  const className = lootBox[0];
+  if(className !== null || className !== 'loot-ftw') {
+    console.log("whattt");
+    const loot = document.createElement('div');
+    loot.classList.add('loot-nuke');
     loot.style.left = `${x}px`;
     loot.style.top = `${y}px`;
-
-    return loot;
+    return loot
   }
-  return;
 }
 
 function checkLastZombie() {

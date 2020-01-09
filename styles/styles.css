@@ -97,3 +97,11 @@ main p {
   position: absolute;
   z-index: 1;
 }
+
+.loot-nuke {
+  width: 31px;
+  height: 31px;
+  background: url(../images/powerup.png);
+  position: absolute;
+  z-index: 1;
+}
