@@ -105,3 +105,11 @@ main p {
   position: absolute;
   z-index: 1;
 }
+
+.nuked {
+  width: 100px;
+  height: 200px;
+  position: absolute;
+  background: url(../images/explosion-4.png) 0 0;
+  z-index: 2;
+}

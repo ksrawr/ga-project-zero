@@ -41,6 +41,8 @@ const lootBox = [
   'loot-nuke'
 ];
 
+let time = 3;
+
 const startBtn = document.querySelector('button');
 
 /* ----------- functions ----------- */
@@ -137,9 +139,8 @@ function moveBullet(bullet, angle, dx, dy) {
         const loot = createLoot(lootX,lootY);
         main.insertAdjacentElement('beforeend', loot);
 
-        score = score + 5;
+        score = score + 50;
         scoreDisplay.textContent = `SCORE: ${score}`;
-        zombie.remove();
         bullet.remove();
         clearInterval(bulletMoveInterval);
       }
@@ -174,14 +175,6 @@ function moveBullet(bullet, angle, dx, dy) {
       } else {
         bullet.style.top = `${bulletY - dy}px`;
       }
-    } else if(angle < 135) {
-      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
-        bullet.remove();
-        clearInterval(bulletMoveInterval);
-      } else {
-        bullet.style.left = `${bulletX - (dx/2)}px`;
-        bullet.style.top = `${bulletY - (dy/2)}px`;
-      }
     } else if (angle < 180) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
@@ -196,14 +189,6 @@ function moveBullet(bullet, angle, dx, dy) {
         clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX - dx}px`;
-      }
-    } else if (angle < 225) {
-      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
-        bullet.remove();
-        clearInterval(bulletMoveInterval);
-      } else {
-        bullet.style.left = `${bulletX - (dx/2)}px`;
-        bullet.style.top = `${bulletY + (dy/2)}px`;
       }
     } else if (angle < 270) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
@@ -260,6 +245,13 @@ function createZombie() {
 
 function moveZombie(zombie) {
   let zombieMoveInterval = setInterval(() => {
+    if(zombie.classList.contains('dead')) {
+      zombie.remove();
+    } else if(zombie.classList.contains('nuked')) {
+      
+      return;
+    }
+
     const zombieX = parseInt(zombie.style.left);
     const zombieY = parseInt(zombie.style.top);
 
@@ -284,10 +276,10 @@ function moveZombie(zombie) {
     let bullets = document.querySelectorAll('.bullet');
     bullets.forEach((bullet) => {
       if(checkBulletCollision(zombie, bullet)){
-        bullet.remove();
-        zombie.remove();
-        zombie.classList.remove('zombie');
-        zombie.classList.add('dead');
+        // bullet.remove();
+        // zombie.remove();
+        // zombie.classList.remove('zombie');
+        // zombie.classList.add('dead');
         clearInterval(zombieMoveInterval);
       }
     });
@@ -431,35 +423,38 @@ function checkNukeCollision() {
       const nukeTop = parseInt(nuke.style.top);
       const nukeRight = nukeLeft + 31;
       const nukeBottom = nukeTop + 31;
-
-      // console.log(nukeRight);
-      // console.log(nukeTop);
-      // console.log(playerLeft);
-      // console.log(playerTop);
       
       if (playerLeft <= nukeLeft && nukeLeft <= playerRight && playerRight <= nukeRight) {
         if( playerTop <= nukeTop && nukeTop <= playerBottom && playerBottom <= nukeBottom){
+          nuke.remove();
           nukeCollides = true;
         } else if(nukeTop <= playerTop && playerTop <= nukeBottom && nukeBottom <= playerBottom) {
+          nuke.remove();
           nukeCollides = true;
         }
       }
     
       if(nukeLeft <= playerLeft && playerLeft <= nukeRight && playerRight) {
         if(nukeTop <= playerBottom && playerBottom <= nukeBottom) {
+          nuke.remove();
           nukeCollides = true;
         } else if(nukeTop <= playerTop &&playerTop <= nukeBottom) {
+          nuke.remove();
           nukeCollides = true;
         }
       }
     
       if(nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
+        nuke.remove();
         nukeCollides = true;
       } else if (nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerTop && playerTop <= nukeBottom) {
+        nuke.remove();
         nukeCollides = true;
       } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
+        nuke.remove();
         nukeCollides = true;
       } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerTop &&playerTop <= nukeBottom) {
+        nuke.remove();
         nukeCollides = true;
       }
     });
@@ -471,8 +466,8 @@ function nukeZombies() {
   let zombies = document.querySelectorAll('.zombie');
   zombies.forEach((zombie) => {
     zombie.classList.remove('zombie');
-    zombie.classList.add('dead');
-    zombie.remove();
+    // zombie.classList.add('dead');
+    zombie.classList.add('nuked');
   });
 }
 
@@ -487,32 +482,43 @@ function increaseZombieCount() {
   zombieCount = zombieCount * 2;
 }
 
+const setTimer = () => {
+  // function to run, time to wait to call function
+  const timer = setInterval(() => {
+    // used to stop setInterval
+    if(time <= 0) {
+      clearInterval(timer);
+      setUpRound();
+      if(time >= 0) setTimer();
+    }
+    updateTime();
+    time--;
+  }, 1000);
+}
+
 function startGame() {
   const header = document.querySelector('section');
   header.style.display = 'none';
 
   scoreDisplay.style.display = '';
 
-  // let nukes = document.querySelectorAll('.loot-nuke');
-  // console.log(nukes);
-
   window.addEventListener("mousedown", () => fireBullet(event));
 
   window.addEventListener('keydown', () => movePlayer(event));
 
-  // for(let i = 0; i < 2; i++) {
-  //   createZombie();
-  // }
-  // let zombieSpawnInterval = setInterval(() => {
-  //   if(checkLastZombie()) {
-  //     increaseZombieCount();
-  //     for(let i = 0; i <= zombieCount; i++) {
-  //       createZombie();
-  //     }
-  //   }
-  //   score++;
-  //   scoreDisplay.textContent = `SCORE: ${score}`;
-  // }, 5000);
+  for(let i = 0; i < 2; i++) {
+    createZombie();
+  }
+  let zombieSpawnInterval = setInterval(() => {
+    if(checkLastZombie()) {
+      increaseZombieCount();
+      for(let i = 0; i <= zombieCount; i++) {
+        createZombie();
+      }
+    }
+    score = score + 5;
+    scoreDisplay.textContent = `SCORE: ${score}`;
+  }, 5000);
 }
 
 /* ------ event listeners ----- */
@@ -522,4 +528,3 @@ function startGame() {
 // window.addEventListener('keydown', () => movePlayer(event));
 
 startBtn.addEventListener('click', startGame);
-// startGame();
