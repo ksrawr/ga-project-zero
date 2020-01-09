@@ -49,22 +49,38 @@ function movePlayer(event) {
   let x = parseInt(player.offsetLeft);
   let y = parseInt(player.offsetTop);
 
+  if(checkNukeCollision()) {
+    nukeZombies();
+  }
+
   if(event.key === 'ArrowDown' || event.key === 's') {
     y += 5;
     player.style.top = y + 'px';
     player.style.background = 'url(./images/AH-People1.png) -46px 0';
+    if(checkNukeCollision()) {
+      nukeZombies();
+    }
   } else if (event.key === "ArrowUp" || event.key === 'w') {
     y -= 5;
     player.style.top = y + 'px';
     player.style.background = 'url(./images/AH-People1.png) -46px -144px';
+    if(checkNukeCollision()) {
+      nukeZombies();
+    }
   } else if (event.key === "ArrowLeft" || event.key === 'a') {
     x -= 5;
     player.style.left = x + 'px';
     player.style.background = 'url(./images/AH-People1.png) -46px -48px'
+    if(checkNukeCollision()) {
+      nukeZombies();
+    }
   } else if (event.key === "ArrowRight" || event.key === 'd') {
     x += 5;
     player.style.left = x + 'px';
     player.style.background = 'url(./images/AH-People1.png) -46px -96px';
+    if(checkNukeCollision()) {
+      nukeZombies();
+    }
   }
 }
 
@@ -412,29 +428,29 @@ function checkNukeCollision() {
       const nukeRight = nukeLeft + 31;
       const nukeBottom = nukeTop + 31;
       
-      if (nukeLeft <= zombieRight && zombieRight <= nukeRight) {
-        if(nukeTop <= zombieBottom && zombieBottom <= nukeBottom){
+      if (nukeLeft <= playerRight && playerRight <= nukeRight) {
+        if(nukeTop <= playerBottom && playerBottom <= nukeBottom){
           return true;
-        } else if(nukeTop <= zombieTop && zombieTop <= nukeBottom) {
-          return true;
-        }
-      }
-    
-      if(nukeLeft <= zombieLeft && zombieLeft <= nukeRight) {
-        if(nukeTop <= zombieBottom && zombieBottom <= nukeBottom) {
-          return true;
-        } else if(nukeTop <= zombieTop &&zombieTop <= nukeBottom) {
+        } else if(nukeTop <= playerTop && playerTop <= nukeBottom) {
           return true;
         }
       }
     
-      if(nukeLeft <= zombieRight && zombieRight <= nukeRight && nukeTop <= zombieBottom && zombieBottom <= nukeBottom) {
+      if(nukeLeft <= playerLeft && playerLeft <= nukeRight) {
+        if(nukeTop <= playerBottom && playerBottom <= nukeBottom) {
+          return true;
+        } else if(nukeTop <= playerTop &&playerTop <= nukeBottom) {
+          return true;
+        }
+      }
+    
+      if(nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
         return true;
-      } else if (nukeLeft <= zombieRight && zombieRight <= nukeRight && nukeTop <= zombieTop && zombieTop <= nukeBottom) {
+      } else if (nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerTop && playerTop <= nukeBottom) {
         return true;
-      } else if (nukeLeft <= zombieLeft && zombieLeft <= nukeRight && nukeTop <= zombieBottom && zombieBottom <= nukeBottom) {
+      } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
         return true;
-      } else if (nukeLeft <= zombieLeft && zombieLeft <= nukeRight && nukeTop <= zombieTop &&zombieTop <= nukeBottom) {
+      } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerTop &&playerTop <= nukeBottom) {
         return true;
       }
     });
@@ -444,7 +460,11 @@ function checkNukeCollision() {
 
 function nukeZombies() {
   let zombies = document.querySelectorAll('.zombie');
-  zombies.forEach((zombie) => zombie.remove());
+  zombies.forEach((zombie) => {
+    zombie.classList.remove('zombie');
+    zombie.classList.add('dead');
+    zombie.remove();
+  });
 }
 
 function checkLastZombie() {
