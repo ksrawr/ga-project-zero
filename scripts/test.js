@@ -1,8 +1,6 @@
 /* ---------- constants ----------- */
 
 const player = document.getElementById('player');
-player.style.left = "50%";
-player.style.top = "50%";
 
 const main = document.querySelector('main');
 
@@ -12,6 +10,9 @@ let score = 0;
 
 const windowLimitX = $(document).width();
 const windowLimitY = $(document).height();
+
+console.log(windowLimitX);
+console.log(windowLimitY);
 
 scoreDisplay.style.left = `${windowLimitX - 100}px`;
 scoreDisplay.style.top = `0px`;
@@ -42,6 +43,8 @@ const lootBox = [
 ];
 
 let time = 15;
+
+let gameRunning = false;
 
 const startBtn = document.querySelector('button');
 
@@ -109,7 +112,6 @@ function fireBullet(event) {
   const mouseClickedY = event.clientY;
 
   const angle = calculateAngle(mouseClickedX - x, y - mouseClickedY);
-  console.log(angle);
 
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
@@ -124,7 +126,6 @@ function moveBullet(bullet, angle, dx, dy) {
   let bulletMoveInterval = setInterval(() => {
     let bulletX = parseInt(bullet.style.left);
     let bulletY = parseInt(bullet.style.top);
-    console.log("hi");
 
     /* check for collision with zombies */
     let zombies = document.querySelectorAll('.zombie');
@@ -132,8 +133,8 @@ function moveBullet(bullet, angle, dx, dy) {
       if(checkBulletCollision(zombie, bullet)) {
         zombie.classList.remove('zombie');
         zombie.classList.add('dead');
-
-        zombie.classList.add('loot-nuke');
+        
+        // zombie.classList.add('loot-nuke');
         const lootX = parseInt(zombie.style.left);
         const lootY = parseInt(zombie.style.top);
         const loot = createLoot(lootX,lootY);
@@ -259,18 +260,17 @@ function moveZombie(zombie) {
     const playerY = parseInt(player.offsetTop);
 
     const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
-    console.log(angle);
 
     // const speed = 10;
     const speed = 30;
     const dx = speed * Math.abs(Math.cos(angle));
     const dy = speed * Math.abs(Math.sin(angle));
 
-    console.log('zmove');
-
     if(checkZombiePlayerCollision(zombie)) {
+      clearInterval(zombieMoveInterval);
       clearInterval(zombieSpawnInterval);
-      alert(`Game Over. Score: ${score}`);
+      zombie.classList.add('dead');
+      endGame();
     }
 
     let bullets = document.querySelectorAll('.bullet');
@@ -500,8 +500,14 @@ const setTimer = (zombie) => {
 }
 
 function startGame() {
+  gameRunning = true;
   const header = document.querySelector('section');
   header.style.display = 'none';
+
+  main.style.display = 'block';
+
+  player.style.left =  '50%';
+  player.style.top =  '50%';
 
   scoreDisplay.style.display = '';
 
@@ -522,6 +528,35 @@ function startGame() {
     score = score + 5;
     scoreDisplay.textContent = `SCORE: ${score}`;
   }, 5000);
+}
+
+function endGame() {
+  if(!gameRunning) {
+    return;
+  }
+  main.style.display = "none";
+  
+  const zombies = document.querySelectorAll('.zombie');
+  zombies.forEach((zombie) => zombie.remove());
+
+  const nukes = document.querySelectorAll('.nuked');
+  nukes.forEach((nuke) => nuke.remove());
+
+  player.remove();
+
+  const scoreEnd = document.createElement('p');
+  scoreEnd.setAttribute('id', 'end-score');
+  // scoreEnd.style.textAlign = "center";
+
+  const endDisplaySelection = document.getElementById('end-screen');
+  endDisplaySelection.style.height = '100vh';
+  endDisplaySelection.style.width = '100vw';
+  endDisplaySelection.insertAdjacentElement('beforeend', scoreEnd);
+
+  const h1Selection = document.getElementById('end-score');
+  h1Selection.textContent = `GAME OVER. SCORE: ${score}`;
+
+  gameRunning = false;
 }
 
 /* ------ event listeners ----- */

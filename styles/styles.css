@@ -54,8 +54,10 @@ section button:hover {
   cursor: pointer;
 }
 
-main { 
-  min-height: 100vh;
+main {
+  display: none;
+  width: 100vw;
+  height: 100vh;
   background-color: #f1f1f1;
   cursor: crosshair;
 }
@@ -98,6 +100,8 @@ main p {
   z-index: 1;
 }
 
+
+
 .loot-nuke {
   width: 31px;
   height: 31px;
@@ -119,4 +123,15 @@ main p {
   100% {
     background-position: -1536px;
   }
+}
+
+#end-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#end-screen p {
+  font-size: 60px;
+  /* text-align: center; */
 }
