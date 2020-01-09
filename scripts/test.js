@@ -82,6 +82,9 @@ function movePlayer(event) {
       nukeZombies();
     }
   }
+  if(checkNukeCollision()) {
+    nukeZombies();
+  }
 }
 
 function createBulletElement() {
@@ -416,8 +419,9 @@ function createLoot(x, y) {
 }
 
 function checkNukeCollision() {
-  let nukes = document.querySelectorAll('loot-nuke');
-  if(nukes !== null || nukes !== undefined) {
+  let nukes = document.querySelectorAll('.loot-nuke');
+  let nukeCollides = false;
+  if(nukes.length > 0) {
     const playerLeft = parseInt(player.offsetLeft);
     const playerTop = parseInt(player.offsetTop);
     const playerRight = playerLeft + 48;
@@ -427,35 +431,40 @@ function checkNukeCollision() {
       const nukeTop = parseInt(nuke.style.top);
       const nukeRight = nukeLeft + 31;
       const nukeBottom = nukeTop + 31;
+
+      // console.log(nukeRight);
+      // console.log(nukeTop);
+      // console.log(playerLeft);
+      // console.log(playerTop);
       
-      if (nukeLeft <= playerRight && playerRight <= nukeRight) {
-        if(nukeTop <= playerBottom && playerBottom <= nukeBottom){
-          return true;
-        } else if(nukeTop <= playerTop && playerTop <= nukeBottom) {
-          return true;
+      if (playerLeft <= nukeLeft && nukeLeft <= playerRight && playerRight <= nukeRight) {
+        if( playerTop <= nukeTop && nukeTop <= playerBottom && playerBottom <= nukeBottom){
+          nukeCollides = true;
+        } else if(nukeTop <= playerTop && playerTop <= nukeBottom && nukeBottom <= playerBottom) {
+          nukeCollides = true;
         }
       }
     
-      if(nukeLeft <= playerLeft && playerLeft <= nukeRight) {
+      if(nukeLeft <= playerLeft && playerLeft <= nukeRight && playerRight) {
         if(nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-          return true;
+          nukeCollides = true;
         } else if(nukeTop <= playerTop &&playerTop <= nukeBottom) {
-          return true;
+          nukeCollides = true;
         }
       }
     
       if(nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-        return true;
+        nukeCollides = true;
       } else if (nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerTop && playerTop <= nukeBottom) {
-        return true;
+        nukeCollides = true;
       } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-        return true;
+        nukeCollides = true;
       } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerTop &&playerTop <= nukeBottom) {
-        return true;
+        nukeCollides = true;
       }
     });
   }
-  return false;
+  return nukeCollides;
 }
 
 function nukeZombies() {
@@ -484,23 +493,26 @@ function startGame() {
 
   scoreDisplay.style.display = '';
 
+  // let nukes = document.querySelectorAll('.loot-nuke');
+  // console.log(nukes);
+
   window.addEventListener("mousedown", () => fireBullet(event));
 
   window.addEventListener('keydown', () => movePlayer(event));
 
-  for(let i = 0; i < 2; i++) {
-    createZombie();
-  }
-  let zombieSpawnInterval = setInterval(() => {
-    if(checkLastZombie()) {
-      increaseZombieCount();
-      for(let i = 0; i <= zombieCount; i++) {
-        createZombie();
-      }
-    }
-    score++;
-    scoreDisplay.textContent = `SCORE: ${score}`;
-  }, 5000);
+  // for(let i = 0; i < 2; i++) {
+  //   createZombie();
+  // }
+  // let zombieSpawnInterval = setInterval(() => {
+  //   if(checkLastZombie()) {
+  //     increaseZombieCount();
+  //     for(let i = 0; i <= zombieCount; i++) {
+  //       createZombie();
+  //     }
+  //   }
+  //   score++;
+  //   scoreDisplay.textContent = `SCORE: ${score}`;
+  // }, 5000);
 }
 
 /* ------ event listeners ----- */
