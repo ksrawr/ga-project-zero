@@ -112,7 +112,7 @@ main p {
   position: absolute;
   background: url(../images/explosion-4.png) 0 0;
   z-index: 2;
-  animation: play 5s steps(12) infinite;
+  animation: play 5s steps(12);
 }
 
 @keyframes play {

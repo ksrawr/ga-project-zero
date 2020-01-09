@@ -30,7 +30,7 @@ const zombieSpawnPoints = [
 
 let zombieSpawnInterval;
 let zombieSpeed = 10;
-let zombieCount = 10;
+let zombieCount = 3;
 
 const lootBox = [
   // null,
@@ -41,7 +41,7 @@ const lootBox = [
   'loot-nuke'
 ];
 
-let time = 6;
+let time = 15;
 
 const startBtn = document.querySelector('button');
 
@@ -469,6 +469,7 @@ function nukeZombies() {
     // zombie.classList.add('dead');
     zombie.classList.add('nuked');
   });
+  score = score + 400;
 }
 
 function checkLastZombie() {
@@ -505,19 +506,19 @@ function startGame() {
 
   window.addEventListener('keydown', () => movePlayer(event));
 
-  // for(let i = 0; i < 2; i++) {
-  //   createZombie();
-  // }
-  // let zombieSpawnInterval = setInterval(() => {
-  //   if(checkLastZombie()) {
-  //     increaseZombieCount();
-  //     for(let i = 0; i <= zombieCount; i++) {
-  //       createZombie();
-  //     }
-  //   }
-  //   score = score + 5;
-  //   scoreDisplay.textContent = `SCORE: ${score}`;
-  // }, 5000);
+  for(let i = 0; i < 2; i++) {
+    createZombie();
+  }
+  let zombieSpawnInterval = setInterval(() => {
+    if(checkLastZombie()) {
+      increaseZombieCount();
+      for(let i = 0; i <= zombieCount; i++) {
+        createZombie();
+      }
+    }
+    score = score + 5;
+    scoreDisplay.textContent = `SCORE: ${score}`;
+  }, 5000);
 }
 
 /* ------ event listeners ----- */
