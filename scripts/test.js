@@ -58,28 +58,28 @@ function movePlayer(event) {
   if(event.key === 'ArrowDown' || event.key === 's') {
     y += 5;
     player.style.top = y + 'px';
-    player.style.background = 'url(./images/AH-People1.png) -46px 0';
+    player.style.background = 'url(./images/AH-People12.png) -46px 0';
     if(checkNukeCollision()) {
       nukeZombies();
     }
   } else if (event.key === "ArrowUp" || event.key === 'w') {
     y -= 5;
     player.style.top = y + 'px';
-    player.style.background = 'url(./images/AH-People1.png) -46px -144px';
+    player.style.background = 'url(./images/AH-People12.png) -46px -144px';
     if(checkNukeCollision()) {
       nukeZombies();
     }
   } else if (event.key === "ArrowLeft" || event.key === 'a') {
     x -= 5;
     player.style.left = x + 'px';
-    player.style.background = 'url(./images/AH-People1.png) -46px -48px'
+    player.style.background = 'url(./images/AH-People12.png) -46px -48px'
     if(checkNukeCollision()) {
       nukeZombies();
     }
   } else if (event.key === "ArrowRight" || event.key === 'd') {
     x += 5;
     player.style.left = x + 'px';
-    player.style.background = 'url(./images/AH-People1.png) -46px -96px';
+    player.style.background = 'url(./images/AH-People12.png) -46px -96px';
     if(checkNukeCollision()) {
       nukeZombies();
     }
