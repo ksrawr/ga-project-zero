@@ -92,7 +92,7 @@ function fireBullet(event) {
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
 
-  const speed = 10;
+  const speed = 50;
   const dx = speed * Math.abs(Math.cos(angle));
   const dy = speed * Math.abs(Math.sin(angle));
   moveBullet(bullet, angle, dx, dy);
@@ -209,7 +209,7 @@ function moveBullet(bullet, angle, dx, dy) {
         bullet.style.top = `${bulletY + dy}px`;
       }
     }
-  }, 500);
+  }, 50);
 }
 
 function calculateAngle(x, y) {
