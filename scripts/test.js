@@ -463,7 +463,10 @@ function checkNukeCollision() {
 }
 
 function nukeZombies() {
-  let zombies = document.querySelectorAll('.zombie');
+  const kaboomSound = new Audio('./sounds/Kaboom.mp3');
+  kaboomSound.play();
+  const explosionSound = new Audio('./sounds/Explosion+9.wav');
+  explosionSound.play();  let zombies = document.querySelectorAll('.zombie');
   zombies.forEach((zombie) => {
     zombie.classList.remove('zombie');
     // zombie.classList.add('dead');
