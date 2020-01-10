@@ -66,9 +66,10 @@ main {
 
 main p {
   display: block;
-  font-size: 16px;
+  font-size: 20px;
   position: absolute;
   z-index: 2;
+  color: white;
 }
 
 #player {
@@ -153,6 +154,7 @@ main p {
 }
 
 #end-screen p {
-  font-size: 60px;
-  /* text-align: center; */
+  font-size: 100px;
+  color: crimson;
+  text-decoration: overline underline;
 }

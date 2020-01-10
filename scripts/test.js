@@ -14,7 +14,7 @@ const windowLimitY = $(document).height();
 console.log(windowLimitX);
 console.log(windowLimitY);
 
-scoreDisplay.style.left = `${windowLimitX - 100}px`;
+scoreDisplay.style.left = `${windowLimitX - 200}px`;
 scoreDisplay.style.top = `0px`;
 scoreDisplay.style.display = 'none';
 
@@ -147,21 +147,16 @@ function moveBullet(bullet, angle, dx, dy) {
       }
     });
 
+    const bulletSound = new Audio('./sounds/Gun+1.wav');
+    bulletSound.play();
+
     /* test just go straight across */
     // if (bulletX === windowLimitX) {
     //   bullet.remove();
     // } else {
     //   bullet.style.left = `${bulletX + dx}px`;
     // }
-    if(angle <= 45) {
-      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
-        bullet.remove();
-        clearInterval(bulletMoveInterval);
-      } else {
-        bullet.style.left = `${bulletX + (dx/2)}px`;
-        bullet.style.top = `${bulletY - (dy/2)}px`;
-      }
-    } else if(angle < 90) {
+    if(angle < 90) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
         bullet.remove();
         clearInterval(bulletMoveInterval);
@@ -490,7 +485,9 @@ const setTimer = (zombie) => {
   const timer = setInterval(() => {
     // used to stop setInterval
     if(time <= 0) {
-      zombie.remove();
+      if(zombie !== undefined ) {
+        zombie.remove();
+      }
       clearInterval(timer);
       if(time >= 0) setTimer();
     }
@@ -548,6 +545,7 @@ function endGame() {
   // scoreEnd.style.textAlign = "center";
 
   const endDisplaySelection = document.getElementById('end-screen');
+  endDisplaySelection.style.backgroundColor = 'black';
   endDisplaySelection.style.height = '100vh';
   endDisplaySelection.style.width = '100vw';
   endDisplaySelection.insertAdjacentElement('beforeend', scoreEnd);
