@@ -455,8 +455,4 @@ function endGame() {
 
 /* ------ event listeners ----- */
 
-// window.addEventListener("mousedown", () => fireBullet(event));
-
-// window.addEventListener('keydown', () => movePlayer(event));
-
 startBtn.addEventListener('click', startGame);
