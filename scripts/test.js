@@ -51,38 +51,22 @@ function movePlayer(event) {
   let x = parseInt(player.offsetLeft);
   let y = parseInt(player.offsetTop);
 
-  if(checkNukeCollision()) {
-    nukeZombies();
-  }
-
   if(event.key === 'ArrowDown' || event.key === 's') {
     y += 5;
     player.style.top = y + 'px';
     player.style.background = 'url(./images/AH-People12.png) -46px 0';
-    if(checkNukeCollision()) {
-      nukeZombies();
-    }
   } else if (event.key === "ArrowUp" || event.key === 'w') {
     y -= 5;
     player.style.top = y + 'px';
     player.style.background = 'url(./images/AH-People12.png) -46px -144px';
-    if(checkNukeCollision()) {
-      nukeZombies();
-    }
   } else if (event.key === "ArrowLeft" || event.key === 'a') {
     x -= 5;
     player.style.left = x + 'px';
     player.style.background = 'url(./images/AH-People12.png) -46px -48px'
-    if(checkNukeCollision()) {
-      nukeZombies();
-    }
   } else if (event.key === "ArrowRight" || event.key === 'd') {
     x += 5;
     player.style.left = x + 'px';
     player.style.background = 'url(./images/AH-People12.png) -46px -96px';
-    // if(checkNukeCollision()) {
-    //   nukeZombies();
-    // }
   }
   if(checkNukeCollision()) {
     nukeZombies();
@@ -153,13 +137,6 @@ function moveBullet(bullet, angle, dx, dy) {
         clearInterval(bulletMoveInterval);
       } else {
         bullet.style.left = `${bulletX + dx}px`;
-        bullet.style.top = `${bulletY - dy}px`;
-      }
-    } else if (angle <= 110) {
-      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
-        bullet.remove();
-        clearInterval(bulletMoveInterval);
-      } else {
         bullet.style.top = `${bulletY - dy}px`;
       }
     } else if (angle < 180) {
@@ -332,47 +309,6 @@ function checkZombiePlayerCollision(zombie) {
   if(zombie.classList.contains('dead')) {
     return false;
   }
-  const zombieLeft = parseInt(zombie.style.left);
-  const zombieTop = parseInt(zombie.style.top);
-  const zombieBottom = zombieTop + 80;
-  const zombieRight = zombieLeft + 41;
-
-  const playerLeft = parseInt(player.offsetLeft);
-  const playerTop = parseInt(player.offsetTop);
-  const playerBottom = playerTop + 48;
-  const playerRight = playerLeft + 51;
-  
-  // if (playerLeft <= zombieRight && zombieRight <= playerRight) {
-  //   if(playerTop <= zombieBottom && zombieBottom <= playerBottom){
-  //     return true;
-  //   } else if(playerTop <= zombieTop && zombieTop <= playerBottom) {
-  //     return true;
-  //   }
-  //   return true;
-  // }
-
-  // if(playerLeft <= zombieLeft && zombieLeft <= playerRight) {
-  //   if(playerTop <= zombieBottom && zombieBottom <= playerBottom) {
-  //     return true;
-  //   } else if(playerTop <= zombieTop &&zombieTop <= playerBottom) {
-  //     return true;
-  //   }
-  //   return true;
-  // }
-
-  // if(playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
-  //   return true;
-  // } 
-  // if (playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieTop && zombieTop <= playerBottom) {
-  //   return true;
-  // } 
-  // if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
-  //   return true;
-  // }
-  // if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieTop &&zombieTop <= playerBottom) {
-  //   return true;
-  // }
-  // return false;
   if(checkCollision(player, zombie)) {
     return true;
   }
@@ -380,55 +316,21 @@ function checkZombiePlayerCollision(zombie) {
 }
 
 function checkBulletCollision(bullet, zombie) {
-  const zombieLeft = parseInt(zombie.style.left);
-  const zombieTop = parseInt(zombie.style.top);
-  const zombieBottom = zombieTop + 80;
-  const zombieRight = zombieLeft + 41;
-
-  const bulletLeft = parseInt(bullet.style.left);
-  const bulletTop = parseInt(bullet.style.top);
-  const bulletBottom = bulletTop + 20;
-  const bulletRight = bulletLeft + 20;
-
-  if (bulletLeft <= zombieRight && zombieRight <= bulletRight) {
-    if(bulletTop <= zombieBottom && zombieBottom <= bulletBottom){
-      return true;
-    } else if(bulletTop <= zombieTop && zombieTop <= bulletBottom) {
-      return true;
-    }
-  }
-
-  if(bulletLeft <= zombieLeft && zombieLeft <= bulletRight) {
-    if(bulletTop <= zombieBottom && zombieBottom <= bulletBottom) {
-      return true;
-    } else if(bulletTop <= zombieTop &&zombieTop <= bulletBottom) {
-      return true;
-    }
-  }
-
-  if(bulletLeft <= zombieRight && zombieRight <= bulletRight && bulletTop <= zombieBottom && zombieBottom <= bulletBottom) {
-    return true;
-  } else if (bulletLeft <= zombieRight && zombieRight <= bulletRight && bulletTop <= zombieTop && zombieTop <= bulletBottom) {
-    return true;
-  } else if (bulletLeft <= zombieLeft && zombieLeft <= bulletRight && bulletTop <= zombieBottom && zombieBottom <= bulletBottom) {
-    return true;
-  } else if (bulletLeft <= zombieLeft && zombieLeft <= bulletRight && bulletTop <= zombieTop &&zombieTop <= bulletBottom) {
+  if(checkCollision(bullet, zombie)) {
     return true;
   }
   return false;
 }
 
 function createLoot(x, y) {
-  console.log("we working");
   const random = Math.floor(Math.random() * lootBox.length);
   const className = lootBox[random];
   if(className !== null || className !== 'loot-ftw') {
-    console.log("whattt");
     const loot = document.createElement('div');
     loot.classList.add(className);
     loot.style.left = `${x}px`;
     loot.style.top = `${y}px`;
-    return loot
+    return loot;
   }
 }
 
@@ -538,7 +440,6 @@ function endGame() {
 
   const scoreEnd = document.createElement('p');
   scoreEnd.setAttribute('id', 'end-score');
-  // scoreEnd.style.textAlign = "center";
 
   const endDisplaySelection = document.getElementById('end-screen');
   endDisplaySelection.style.backgroundColor = 'black';
