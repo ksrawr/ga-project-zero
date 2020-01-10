@@ -1,5 +1,7 @@
 /* ---------- constants ----------- */
 
+const audio = document.getElementById('my_audio');
+
 const player = document.getElementById('player');
 
 const main = document.querySelector('main');
@@ -393,8 +395,11 @@ const setTimer = (zombie) => {
 }
 
 function startGame() {
+  audio.play();
   console.log('game running');
   gameRunning = true;
+
+  /* Remove Title Screen and Show Game Screen */
   const header = document.querySelector('section');
   header.style.display = 'none';
 
@@ -456,3 +461,14 @@ function endGame() {
 /* ------ event listeners ----- */
 
 startBtn.addEventListener('click', startGame);
+
+// const playAudio = () => {
+//   console.log('playing', event)
+//   audio.muted = false;
+//   audio.play();
+// }
+// // audio.play()
+
+// document.getElementsByTagName('body')[0].addEventListener('mouseover',playAudio);
+
+
