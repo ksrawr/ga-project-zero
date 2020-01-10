@@ -1,575 +1,474 @@
+/* ---------- constants ----------- */
+
+const audio = document.getElementById('my_audio');
+
+const player = document.getElementById('player');
+
+const main = document.querySelector('main');
+
+const scoreDisplay = document.querySelector('.score');
+// player score
+let score = 0;
+
+const windowLimitX = $(document).width();
+const windowLimitY = $(document).height();
+
+scoreDisplay.style.left = `${windowLimitX - 200}px`;
+scoreDisplay.style.top = `0px`;
+scoreDisplay.style.display = 'none';
+
+const zombieSpawnPoints = [
+  {'x':0,'y':0},
+  {'x':windowLimitX-100,'y':0},
+  {'x':0,'y':windowLimitY-100},
+  {'x':windowLimitX-100,'y':windowLimitY-100},
+  {'x':windowLimitX/2,'y':0},
+  {'x':0,'y':windowLimitY/2},
+  {'x':windowLimitX/2,'y':windowLimitY},
+  {'x':windowLimitX, 'y': windowLimitY/2}
+];
+
 let zombieSpawnInterval;
+let zombieSpeed = 10;
+let zombieCount = 3;
 
-class Survivor {
-  constructor(image, x = 0, y = 0, vx, vy) {
-    this.image = image;
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-    this.health = 40;
-    this.weapon = {
-      type: 'pistol',
-      image: "",
-      damage: ""
-    };
-  }
+const lootBox = [
+  null,
+  null,
+  'loot-right-leg',
+  'loot-left-shoulder',
+  'loot-head',
+  'loot-nuke'
+];
 
-  setImage(image) {
-    this.image = image;
+let time = 25;
+
+let gameRunning = false;
+
+const startBtn = document.querySelector('.start');
+
+/* ----------- functions ----------- */
+
+function movePlayer(event) {
+  let x = parseInt(player.offsetLeft);
+  let y = parseInt(player.offsetTop);
+
+  if(event.key === 'ArrowDown' || event.key === 's') {
+    y += 5;
+    player.style.top = y + 'px';
+    player.style.background = 'url(./images/AH-People12.png) -46px 0';
+  } else if (event.key === "ArrowUp" || event.key === 'w') {
+    y -= 5;
+    player.style.top = y + 'px';
+    player.style.background = 'url(./images/AH-People12.png) -46px -144px';
+  } else if (event.key === "ArrowLeft" || event.key === 'a') {
+    x -= 5;
+    player.style.left = x + 'px';
+    player.style.background = 'url(./images/AH-People12.png) -46px -48px'
+  } else if (event.key === "ArrowRight" || event.key === 'd') {
+    x += 5;
+    player.style.left = x + 'px';
+    player.style.background = 'url(./images/AH-People12.png) -46px -96px';
   }
+  if(checkNukeCollision()) {
+    nukeZombies();
+  }
+}
+
+function createBulletElement() {
+  const x = parseInt(player.offsetLeft) + (51 / 2);
+  const y = parseInt(player.offsetTop) + (48 / 2);
+
+  let bulletElement = document.createElement('div');
+  bulletElement.classList.add('bullet');
+  bulletElement.style.left = `${x}px`;
+  bulletElement.style.top = `${y}px`;
   
-  updatePosition(x, y) {
-    this.x = x;
-    this.y = y;
-  }
+  return bulletElement;
 }
 
-class Bullet {
-  constructor(image, x, y, vx, vy) {
-    this.image = image;
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-  }
+function fireBullet(event) {
+  const x = parseInt(player.offsetLeft) + (48 / 2);
+  const y = parseInt(player.offsetTop) + (51 / 2);
+
+  const mouseClickedX = event.clientX;
+  const mouseClickedY = event.clientY;
+
+  const angle = calculateAngle(mouseClickedX - x, y - mouseClickedY);
+
+  const bullet = createBulletElement();
+  main.insertAdjacentElement('beforeend', bullet);
+
+  const bulletSound = new Audio('./sounds/Gun+1.wav');
+  bulletSound.play();
+
+  const speed = 50;
+  const dx = speed * Math.abs(Math.cos(angle));
+  const dy = speed * Math.abs(Math.sin(angle));
+  moveBullet(bullet, angle, dx, dy);
 }
 
-class Zombie {
-  constructor(image, x, y, vx, vy, element) {
-    this.image = image;
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-    this.damage = 3;
-    this.element = element;
-  }
-}
+function moveBullet(bullet, angle, dx, dy) {
+  let bulletMoveInterval = setInterval(() => {
+    let bulletX = parseInt(bullet.style.left);
+    let bulletY = parseInt(bullet.style.top);
 
-class Game {
-  constructor() {
-    this.survivor = new Survivor();
-    this.zombies = [];
-    for(let i = 0; i < 1; i++) {
-      this.zombies.push(new Zombie());
-    }
-    this.documentHeight = $(document).height();
-    this.documentWidth = $(document).width();
-  }
+    /* check for collision with zombies */
+    let zombies = document.querySelectorAll('.zombie');
+    zombies.forEach((zombie) => {
+      if(checkBulletCollision(zombie, bullet)) {
+        zombie.classList.remove('zombie');
+        zombie.classList.add('dead');
+        
+        // zombie.classList.add('loot-nuke');
+        const lootX = parseInt(zombie.style.left);
+        const lootY = parseInt(zombie.style.top);
+        const loot = createLoot(lootX,lootY);
+        main.insertAdjacentElement('beforeend', loot);
 
-  startGame() {
-    window.addEventListener('keydown', (event) => {
-      let x = game.survivor.x;
-      let y = game.survivor.y;
-      if(event.key === 'ArrowDown' || event.key === 's') {
-        y += 5;
-        playerElement.style.top = y + 'px';
-      } else if (event.key === "ArrowUp" || event.key === 'w') {
-        y -= 5;
-        playerElement.style.top = y + 'px';
-      } else if (event.key === "ArrowLeft" || event.key === 'a') {
-        x -= 5;
-        playerElement.style.left = x + 'px';
-      } else if (event.key === "ArrowRight" || event.key === 'd') {
-        x += 5;
-        playerElement.style.left = x + 'px';
+        score = score + 50;
+        scoreDisplay.textContent = `SCORE: ${score}`;
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
       }
-      game.survivor.updatePosition(x, y);
-    });
-    
-    window.addEventListener('mousedown', (event) => {
-    
-      // const bulletTemplate = `<div id="bullet"></div>`;
-      
-      const mouseClickedX = event.clientX;
-      const mouseClickedY = event.clientY;
-    
-      console.log(mouseClickedX);
-      console.log(mouseClickedY);
-    
-      let bulletX = game.survivor.x + 10;
-      let bulletY = game.survivor.y + 10;
-      
-      const bulletElement = document.createElement('div');
-      bulletElement.setAttribute("class", "bullet");
-      bulletElement.style.left = bulletX + 'px';
-      bulletElement.style.top = bulletY + 'px';
-    
-      mainElement.insertAdjacentElement('afterbegin', bulletElement);
-    
-      /* Bullet should move until the it's reached the end of its trajectory */
-      /* remove bullet when it reaches the end */
-      const windowLimitX = game.documentWidth;
-      const windowLimitY = game.documentHeight;
-    
-      const currentBullet = document.querySelector('.bullet');
-    
-      const angle = calculateAngle(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
-      console.log(angle);
-    
-      const radians = calculateRadians(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
-      console.log(radians);
-    
-    
-      if(angle <= 90) {
-        while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-          console.log("hello");
-          // $(currentBullet).css({"left": bulletX, "top": bulletY});
-          bulletX += Math.abs(1 * Math.cos(angle));
-          bulletY -= Math.abs(1 * Math.sin(angle));
-          currentBullet.style.left = bulletX + 'px';
-          currentBullet.style.top = bulletY + 'px';
-        }
-      } else if(angle <= 180) {
-          while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-            console.log("hello");
-            bulletX -= Math.abs(1 * Math.cos(angle));
-            bulletY -= Math.abs(1 * Math.sin(angle));
-            currentBullet.style.left = bulletX + 'px';
-            currentBullet.style.top = bulletY + 'px';
-          }  
-      } else if(angle <= 270) {
-          while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-            console.log("hello");
-            bulletX -= Math.abs(1 * Math.cos(angle));
-            bulletY += Math.abs(1 * Math.sin(angle));
-            currentBullet.style.left = bulletX + 'px';
-            currentBullet.style.top = bulletY + 'px';
-          } 
-      } else if(angle <= 360) {
-          while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-            console.log("hello");
-            bulletX += Math.abs(1 * Math.cos(angle));
-            bulletY += Math.abs(1 * Math.sin(angle));
-            currentBullet.style.left = bulletX + 'px';
-            currentBullet.style.top = bulletY + 'px';
-          } 
-      } 
     });
 
-    // zombieSpawnInterval = setInterval(() => {this.createZombie()}, 5000);
-  }
-
-  createZombie() {
-    // this.zombies = this.zombies.map((zombie) => {
-    //   const zombieElement = document.createElement('img');
-    //   zombieElement.setAttribute("class", "zombie");
-    //   // spawnPoints contains all possible spawn points (x, y);
-    //   const spawnPoints = [
-    //     // top left
-    //     {
-    //       'x': 0,
-    //       'y': 0
-    //     },
-    //     // top right
-    //     {
-    //       'x': $(document).width(),
-    //       'y': 0
-    //     },
-    //     // bottom left
-    //     {
-    //       'x': 0,
-    //       'y': $(document).height()
-    //     },
-    //     // bottom right
-    //     {
-    //       'x': $(document).width(),
-    //       'y': $(document).height()
-    //     },
-    //     // // middle top
-    //     // {
-    //     //   'x': $(document).width() / 2,
-    //     //   'y': 0
-    //     // },
-    //     // // middle bottom
-    //     // {
-    //     //   'x': $(document).width() / 2,
-    //     //   'y': $(document).height()
-    //     // },
-    //     // // middle left
-    //     // {
-    //     //   'x': 0,
-    //     //   'y': $(document).height() / 2
-    //     // },
-    //     // // middle right
-    //     // {
-    //     //   'x': $(document).width(),
-    //     //   'y': $(document).height() / 2
-    //     // }
-    //   ];
-    //   const random = Math.floor(Math.random() * spawnPoints.length);
-    //   const x = spawnPoints[0].x;
-    //   const y = spawnPoints[0].y;
-    //   zombieElement.style.left = x  + 'px';
-    //   zombieElement.style.top =  y + 'px';
-    //   zombie.element = zombieElement;
-    //   zombie.x = x;
-    //   zombie.y = y;
-    //   mainElement.insertAdjacentElement('beforeend', zombie.element);
-    //   this.moveZombieToPlayer(zombie);
-    // });
-
-    const zombieElement = document.createElement('img');
-    zombieElement.setAttribute("class", "zombie");
-    // spawnPoints contains all possible spawn points (x, y);
-    const spawnPoints = [
-      // top left
-      {
-        'x': 0,
-        'y': 0
-      },
-      // top right
-      {
-        'x': $(document).width(),
-        'y': 0
-      },
-      // bottom left
-      {
-        'x': 0,
-        'y': $(document).height()
-      },
-      // bottom right
-      {
-        'x': $(document).width(),
-        'y': $(document).height()
-      },
-      // // middle top
-      // {
-      //   'x': $(document).width() / 2,
-      //   'y': 0
-      // },
-      // // middle bottom
-      // {
-      //   'x': $(document).width() / 2,
-      //   'y': $(document).height()
-      // },
-      // // middle left
-      // {
-      //   'x': 0,
-      //   'y': $(document).height() / 2
-      // },
-      // // middle right
-      // {
-      //   'x': $(document).width(),
-      //   'y': $(document).height() / 2
-      // }
-    ];
-    
-    const random = Math.floor(Math.random() * spawnPoints.length);
-    const x = spawnPoints[0].x;
-    const y = spawnPoints[0].y;
-    zombieElement.style.left = x  + 'px';
-    zombieElement.style.top =  y + 'px';
-    mainElement.insertAdjacentElement('beforeend', zombieElement);
-    this.moveZombieToPlayer(zombieElement);
-
-    // const zombieElement = document.createElement('img');
-    // zombieElement.setAttribute("class", "zombie");
-    // const random = Math.floor(Math.random() * (300 - 50 + 1) + 50);
-    // zombieElement.style.left =  + 'px';
-    // game.zombie[0].element = zombieElement;
-    // moveZombieToPlayer(game.zombie[0]);
-  }
-
-  moveZombieToPlayer(zombie) {
-    // zombieMoveInterval = setInterval(() => {
-    // let moveInterval = setInterval(() => {
-    //   // get x of our zombie
-    //   // get y of our zombie
-    //   // calculate angle between zombie and survivor
-
-      let x = parseInt(window.getComputedStyle(zombie).getPropertyValue('left'));
-      let y = parseInt(window.getComputedStyle(zombie).getPropertyValue('top'));
-
-      let angle = calculateAngle(game.survivor.x - x, y - game.survivor.y);
-
-      console.log(angle);
-
-    //   if(angle <= 90) {
-    //       x += Math.abs(1 * Math.cos(angle));
-    //       y -= Math.abs(1 * Math.sin(angle));
-    //       zombie.style.left = x + 'px';
-    //       zombie.style.top = y + 'px';
-    //       if(this.checkZombieSurvivorCollision(zombie, playerElement)) {
-    //         clearInterval(zombieSpawnInterval);
-    //       }
-    //   } else if(angle <= 180) {
-    //         x -= Math.abs(1 * Math.cos(angle));
-    //         y -= Math.abs(1 * Math.sin(angle));
-    //         zombie.style.left = x + 'px';
-    //         zombie.style.top = y + 'px';
-    //         if(this.checkZombieSurvivorCollision(zombie, playerElement)) {
-    //           clearInterval(zombieSpawnInterval);
-    //         }
-    //   } else if(angle <= 270) {
-    //         console.log("hello");
-    //         x += Math.abs(1 * Math.cos(angle));
-    //         y -= Math.abs(1 * Math.sin(angle));
-    //         zombie.style.left = x + 'px';
-    //         zombie.style.top = y + 'px';
-    //         if(this.checkZombieSurvivorCollision(zombie, playerElement)) {
-    //           clearInterval(zombieSpawnInterval);
-    //         }
-    //   } else if(angle <= 360) {
-    //     console.log("hello");
-    //       x += Math.abs(1 * Math.cos(angle));
-    //       y += Math.abs(1 * Math.sin(angle));
-    //       zombie.style.left = x + 'px';
-    //       zombie.style.top = y + 'px';
-    //       if(this.checkZombieSurvivorCollision(zombie, playerElement)) {
-    //         clearInterval(zombieSpawnInterval);
-    //       }
-    //   }
-    //   console.log(x);
-    //   console.log(y);
-    // }, 5000);
-
-      if(angle <= 90) {
-        while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-          console.log("hello");
-          angle = calculateAngle(game.survivor.x - x, y - game.survivor.y);
-          x += Math.abs(1 * Math.cos(angle));
-          y += Math.abs(1 * Math.sin(angle));
-          zombie.style.left = x + 'px';
-          zombie.style.top = y + 'px';
-        }
-      } else if(angle <= 180) {
-          while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-            console.log("hello");
-            angle = calculateAngle(game.survivor.x - x, y - game.survivor.y);
-            x += Math.abs(1 * Math.cos(angle));
-            y += Math.abs(1 * Math.sin(angle));
-            zombie.style.left = x + 'px';
-            zombie.style.top = y + 'px';
-          }
-      } else if(angle <= 270) {
-          while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-            console.log("hello");
-            angle = calculateAngle(game.survivor.x - x, y - game.survivor.y);
-            x += Math.abs(1 * Math.cos(angle));
-            y += Math.abs(1 * Math.sin(angle));
-            zombie.style.left = x + 'px';
-            zombie.style.top = y + 'px';
-          }
-      } else if(angle <= 360) {
-        while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-          console.log("hello");
-          angle = calculateAngle(game.survivor.x - x, y - game.survivor.y);
-          x += Math.abs(1 * Math.cos(angle));
-          y += Math.abs(1 * Math.sin(angle));
-          zombie.style.left = x + 'px';
-          zombie.style.top = y + 'px';
-        }
-      } 
-
-      // if(angle <= 90) {
-      //   while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-      //     console.log("hello");
-      //     zombie.x += Math.abs(1 * Math.cos(angle));
-      //     zombie.y -= Math.abs(1 * Math.sin(angle));
-      //     zombie.element.style.left = zombie.x + 'px';
-      //     zombie.element.style.top = zombie.y + 'px';
-      //   }
-      // } else if(angle <= 180) {
-      //     while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-      //       console.log("hello");
-      //       zombie.x -= Math.abs(1 * Math.cos(angle));
-      //       zombie.y -= Math.abs(1 * Math.sin(angle));
-      //       zombie.element.style.left = zombie.x + 'px';
-      //       zombie.element.style.top = zombie.y + 'px';
-      //     }
-      // } else if(angle <= 270) {
-      //     while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-      //       console.log("hello");
-      //       zombie.x += Math.abs(1 * Math.cos(angle));
-      //       zombie.y -= Math.abs(1 * Math.sin(angle));
-      //       zombie.element.style.left = zombie.x + 'px';
-      //       zombie.element.style.top = zombie.y + 'px';
-      //     }
-      // } else if(angle <= 360) {
-      //   while(!this.checkZombieSurvivorCollision(zombie, game.survivor)) {
-      //     console.log("hello");
-      //     zombie.x += Math.abs(1 * Math.cos(angle));
-      //     zombie.y += Math.abs(1 * Math.sin(angle));
-      //     zombie.element.style.left = zombie.x + 'px';
-      //     zombie.element.style.top = zombie.y + 'px';
-      //   }
-      // } 
-
-    // }, 1000);
-  }
-
-  checkZombieSurvivorCollision(zombie, survivor) {
-    const zombieLeft = parseInt(zombie.style.left);
-    const zombieTop = parseInt(zombie.style.top);
-    const zombieBottom = zombieTop - 80;
-    const zombieRight = zombieLeft + 41;
-
-    const survivorLeft = survivor.x;
-    const survivorTop = survivor.y;
-    const survivorRight = survivorLeft + 51;
-    const survivorBottom = survivorTop - 48;
-
-    console.log(survivorLeft);
-    console.log(survivorTop);
-
-    // collision detection should happen for value in between (left and right) AND (top and bottom)
-    if(zombieRight <= survivorLeft || zombieLeft >= survivorRight) {
-      if(zombieTop >= survivorTop && zombieTop >= survivorBottom) {
-        console.log("Collides");
-        return true;
+    if(angle < 90) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX + dx}px`;
+        bullet.style.top = `${bulletY - dy}px`;
       }
-      console.log("Does not collide");
-      return false;
+    } else if (angle < 180) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX - dx}px`;
+        bullet.style.top = `${bulletY - dy}px`;
+      }
+    } else if(angle <= 200) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX - dx}px`;
+      }
+    } else if (angle < 270) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX - dx}px`;
+        bullet.style.top = `${bulletY + dy}px`;
+      }
+    } else if (angle <= 290) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.top = `${bulletY + dy}px`;
+      }
+    } else if (angle <= 360) {
+      if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
+        bullet.remove();
+        clearInterval(bulletMoveInterval);
+      } else {
+        bullet.style.left = `${bulletX + dx}px`;
+        bullet.style.top = `${bulletY + dy}px`;
+      }
     }
-    console.log("Does not collide");
-    return false;
-  }
-
-  gameOver() {
-    clearInterval(zombieMoveInterval);
-    alert('Game over. you ded');
-  }
+  }, 50);
 }
 
-/* constants */
-const playerElement = document.getElementById('player');
-playerElement.style.left = "50%";
-playerElement.style.top = "50%";
-console.log(playerElement.offsetTop);
-console.log(playerElement.offsetLeft);
-
-const zombieElement = document.querySelector('zombie');
-
-const bodyElement = document.querySelector('body');
-
-const mainElement = document.querySelector('main');
-
-const game = new Game();
-game.startGame();
-
-game.survivor.x = playerElement.offsetLeft;
-game.survivor.y = playerElement.offsetTop;
-
-// game.zombies[0].x = zombieElement.offsetLeft;
-// game.zombies[0].y = zombieElement.offsetTop;
-
-
-/* --------- FUNCTIONS ------------ */
-
-// spawn zombieInRandomLocation but give a minimum distance of 50px away from player                                                                                                                                                 
-
-function calculateAngle(x, y, mouseClickedX, mouseClickedY) {
+function calculateAngle(x, y) {
   let angle =  Math.atan2(y, x) * 180 / Math.PI;
-
   angle = (angle + 360) % 360;
-  // angle = 360 - angle;
-
   return angle;
 }
 
-function calculateRadians(x, y, mouseClickedX, mouseClickedY) {
-  let radians =  Math.atan2(y, x);
-  return radians;
+function createZombie() {
+  const zombie = document.createElement('div');
+  zombie.classList.add('zombie');
+  const random = Math.floor(Math.random() * zombieSpawnPoints.length);
+
+  zombie.style.left = `${zombieSpawnPoints[random].x}px`;
+  zombie.style.top = `${zombieSpawnPoints[random].y}px`;
+
+  main.insertAdjacentElement('beforeend', zombie);
+
+  moveZombie(zombie);
 }
 
-/* --------EVENT LISTENERS ------- */
-// window.addEventListener('keydown', (event) => {
-//   let x = game.survivor.x;
-//   let y = game.survivor.y;
-//   if(event.key === 'ArrowDown' || event.key === 's') {
-//     y += 5;
-//     playerElement.style.top = y + 'px';
-//   } else if (event.key === "ArrowUp" || event.key === 'w') {
-//     y -= 5;
-//     playerElement.style.top = y + 'px';
-//   } else if (event.key === "ArrowLeft" || event.key === 'a') {
-//     x -= 5;
-//     playerElement.style.left = x + 'px';
-//   } else if (event.key === "ArrowRight" || event.key === 'd') {
-//     x += 5;
-//     playerElement.style.left = x + 'px';
-//   }
-//   game.survivor.updatePosition(x, y);
-// });
+function moveZombie(zombie) {
+  let zombieMoveInterval = setInterval(() => {
+    if(zombie.classList.contains('dead')) {
+      zombie.remove();
+    } else if(zombie.classList.contains('nuked')) {
+      setTimer(zombie);
+      return;
+    }
 
-// window.addEventListener('mousedown', (event) => {
+    const zombieX = parseInt(zombie.style.left);
+    const zombieY = parseInt(zombie.style.top);
 
-//   // const bulletTemplate = `<div id="bullet"></div>`;
+    const playerX = parseInt(player.offsetLeft);
+    const playerY = parseInt(player.offsetTop);
+
+    const angle = calculateAngle(playerX - zombieX, zombieY - playerY);
+
+    const speed = 30;
+    const dx = speed * Math.abs(Math.cos(angle));
+    const dy = speed * Math.abs(Math.sin(angle));
+
+    if(checkZombiePlayerCollision(zombie)) {
+      clearInterval(zombieMoveInterval);
+      clearInterval(zombieSpawnInterval);
+      zombie.classList.add('dead');
+      endGame();
+    }
+
+    let bullets = document.querySelectorAll('.bullet');
+    bullets.forEach((bullet) => {
+      if(checkBulletCollision(zombie, bullet)){
+        clearInterval(zombieMoveInterval);
+      }
+    });
+
+    /* Reminder spawn points for zombies are the edges of the map */
+    if(angle <= 90) {
+        zombie.style.left = `${zombieX + dx}px`;
+        zombie.style.top = `${zombieY - dy}px`;
+    } else if (angle <= 180) {
+          zombie.style.left = `${zombieX - dx}px`;
+        zombie.style.top = `${zombieY - dy}px`;
+    } else if (angle <= 270) {
+        zombie.style.left = `${zombieX - dx}px`;
+        zombie.style.top = `${zombieY + dy}px`;
+    } else if (angle <= 360) {
+        zombie.style.left = `${zombieX + dx}px`;
+        zombie.style.top = `${zombieY + dy}px`;
+    }
+  }, 500);
+}
+
+function checkCollision(a, b) {
+  const aLeft = parseInt(a.style.left);
+  const aTop = parseInt(a.style.top);
+  const aBottom = aTop + parseInt(a.offsetHeight);
+  const aRight = aLeft + parseInt(a.offsetWidth);
+
+  const bLeft = parseInt(b.style.left);
+  const bTop = parseInt(b.style.top);
+  const bBottom = bTop + parseInt(b.offsetHeight);
+  const bRight = bLeft + parseInt(b.offsetWidth);
+
+  if (aLeft <= bLeft && bLeft <= aRight && aRight <= bRight) {
+    if( aTop <= bTop && bTop <= aBottom && aBottom <= bBottom){
+      return true;
+    } else if(bTop <= aTop && aTop <= bBottom && bBottom <= aBottom) {
+      return true;
+    } else if(bTop <= aBottom && aBottom <= bBottom) {
+      return true;
+    }
+  }
+
+  if(bLeft <= aLeft && aLeft <= bRight && aRight) {
+    if(bTop <= aBottom && aBottom <= bBottom) {
+      return true;
+    } else if(bTop <= aTop &&aTop <= bBottom) {
+      return true;
+    } else if(aTop <= bTop && bTop <= aBottom && aBottom <= bBottom) {
+      return true;
+    }
+  }
+
+  if(bLeft <= aRight && aRight <= bRight && bTop <= aBottom && aBottom <= bBottom) {
+    return true;
+  } else if (bLeft <= aRight && aRight <= bRight && bTop <= aTop && aTop <= bBottom) {
+    return true;
+  } else if (bLeft <= aLeft && aLeft <= bRight && bTop <= aBottom && aBottom <= bBottom) {
+    return true;
+  } else if (bLeft <= aLeft && aLeft <= bRight && bTop <= aTop &&aTop <= bBottom) {
+    return true;
+  }
+
+  if(bTop <= aTop && aTop <= bBottom && bBottom <= aBottom) {
+    if(aLeft <= bLeft && bRight <= aRight) {
+      return true;
+    }
+  } else if (aTop <= bTop && bTop <= aBottom && aBottom <= bBottom) {
+    if(aLeft <= bLeft && bRight <= aRight) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function checkZombiePlayerCollision(zombie) {
+  if(zombie.classList.contains('dead')) {
+    return false;
+  }
+  if(checkCollision(player, zombie)) {
+    return true;
+  }
+  return false;
+}
+
+function checkBulletCollision(bullet, zombie) {
+  if(checkCollision(bullet, zombie)) {
+    return true;
+  }
+  return false;
+}
+
+function createLoot(x, y) {
+  const random = Math.floor(Math.random() * lootBox.length);
+  const className = lootBox[random];
+  if(className !== null || className !== 'loot-ftw') {
+    const loot = document.createElement('div');
+    loot.classList.add(className);
+    loot.style.left = `${x}px`;
+    loot.style.top = `${y}px`;
+    return loot;
+  }
+}
+
+function checkNukeCollision() {
+  let nukes = document.querySelectorAll('.loot-nuke');
+  let nukeCollides = false;
+  if(nukes.length > 0) {
+    const playerLeft = parseInt(player.offsetLeft);
+    const playerTop = parseInt(player.offsetTop);
+    const playerRight = playerLeft + 48;
+    const playerBottom = playerTop + 51;
+    nukes.forEach((nuke) => {
+      if(checkCollision(player, nuke)) {
+        nuke.remove();
+        nukeCollides = true;
+      }
+    });
+  }
+  return nukeCollides;
+}
+
+function nukeZombies() {
+  const kaboomSound = new Audio('./sounds/Kaboom.mp3');
+  kaboomSound.play();
+  const explosionSound = new Audio('./sounds/Explosion+9.wav');
+  explosionSound.play();  let zombies = document.querySelectorAll('.zombie');
+  zombies.forEach((zombie) => {
+    zombie.classList.remove('zombie');
+    // zombie.classList.add('dead');
+    zombie.classList.add('nuked');
+  });
+  score = score + 400;
+}
+
+function checkLastZombie() {
+  let zombieLength = document.querySelectorAll('.zombie');
+  if(zombieLength.length <= 1) {
+    return true;
+  }
+}
+
+function increaseZombieCount() {
+  zombieCount = zombieCount * 2;
+}
+
+const setTimer = (zombie) => {
+  // function to run, time to wait to call function
+  const timer = setInterval(() => {
+    // used to stop setInterval
+    if(time <= 0) {
+      if(zombie !== undefined ) {
+        zombie.remove();
+      }
+      time = 25;
+      clearInterval(timer);
+      if(time >= 0) setTimer();
+    }
+    time--;
+  }, 1000);
+}
+
+function startGame() {
+  audio.play();
+  console.log('game running');
+  gameRunning = true;
+
+  /* Remove Title Screen and Show Game Screen */
+  const header = document.querySelector('section');
+  header.style.display = 'none';
+
+  main.style.display = 'block';
+
+  player.style.left =  '50%';
+  player.style.top =  '50%';
+
+  scoreDisplay.style.display = '';
+
+  window.addEventListener("mousedown", () => fireBullet(event));
+
+  window.addEventListener('keydown', () => movePlayer(event));
+
+  for(let i = 0; i < 2; i++) {
+    createZombie();
+  }
+  let zombieSpawnInterval = setInterval(() => {
+    if(checkLastZombie()) {
+      increaseZombieCount();
+      for(let i = 0; i <= zombieCount; i++) {
+        createZombie();
+      }
+    }
+    score = score + 5;
+    scoreDisplay.textContent = `SCORE: ${score}`;
+  }, 5000);
+}
+
+function endGame() {
+  if(!gameRunning) {
+    return;
+  }
+  main.style.display = "none";
   
-//   const mouseClickedX = event.clientX;
-//   const mouseClickedY = event.clientY;
+  const zombies = document.querySelectorAll('.zombie');
+  zombies.forEach((zombie) => zombie.remove());
 
-//   console.log(mouseClickedX);
-//   console.log(mouseClickedY);
+  const nukes = document.querySelectorAll('.nuked');
+  nukes.forEach((nuke) => nuke.remove());
 
-//   let bulletX = game.survivor.x + 10;
-//   let bulletY = game.survivor.y + 10;
-  
-//   const bulletElement = document.createElement('div');
-//   bulletElement.setAttribute("class", "bullet");
-//   bulletElement.style.left = bulletX + 'px';
-//   bulletElement.style.top = bulletY + 'px';
+  player.remove();
 
-//   mainElement.insertAdjacentElement('afterbegin', bulletElement);
+  const scoreEnd = document.createElement('p');
+  scoreEnd.setAttribute('id', 'end-score');
 
-//   /* Bullet should move until the it's reached the end of its trajectory */
-//   /* remove bullet when it reaches the end */
-//   const windowLimitX = game.documentWidth;
-//   const windowLimitY = game.documentHeight;
+  const endDisplaySelection = document.getElementById('end-screen');
+  endDisplaySelection.style.backgroundColor = 'black';
+  endDisplaySelection.style.height = '100vh';
+  endDisplaySelection.style.width = '100vw';
+  endDisplaySelection.insertAdjacentElement('beforeend', scoreEnd);
 
-//   const currentBullet = document.querySelector('.bullet');
+  const h1Selection = document.getElementById('end-score');
+  h1Selection.textContent = `GAME OVER. SCORE: ${score}`;
 
-//   const angle = calculateAngle(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
-//   console.log(angle);
+  gameRunning = false;
+}
 
-//   const radians = calculateRadians(mouseClickedX - game.survivor.x, game.survivor.y - mouseClickedY);
-//   console.log(radians);
+/* ------ event listeners ----- */
 
+startBtn.addEventListener('click', startGame);
 
-//   console.log(bulletX);
-//   // while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-//   //   console.log("hello");
-//   //   bulletX += 5 * Math.cos(angle);
-//   //   bulletY -= Math.abs(5 * Math.sin(angle));
-//   //   currentBullet.style.left = bulletX + 'px';
-//   //   currentBullet.style.top = bulletY + 'px';
-//   // }
-//   if(angle <= 90) {
-//     while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-//       console.log("hello");
-//       // $(currentBullet).css({"left": bulletX, "top": bulletY});
-//       bulletX += Math.abs(2 * Math.cos(angle));
-//       bulletY -= Math.abs(2 * Math.sin(angle));
-//       currentBullet.style.left = bulletX + 'px';
-//       currentBullet.style.top = bulletY + 'px';
-//       location.reload();
-//     }
-//   } else if(angle <= 180) {
-//       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-//         console.log("hello");
-//         bulletX -= Math.abs(2 * Math.cos(angle));
-//         bulletY -= Math.abs(2 * Math.sin(angle));
-//         currentBullet.style.left = bulletX + 'px';
-//         currentBullet.style.top = bulletY + 'px';
-//       }  
-//   } else if(angle <= 270) {
-//       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-//         console.log("hello");
-//         bulletX -= Math.abs(2 * Math.cos(angle));
-//         bulletY += Math.abs(2 * Math.sin(angle));
-//         currentBullet.style.left = bulletX + 'px';
-//         currentBullet.style.top = bulletY + 'px';
-//       } 
-//   } else if(angle <= 360) {
-//       while(bulletX > 0 && bulletX < windowLimitX && windowLimitY > bulletY && bulletY > 0) {
-//         console.log("hello");
-//         bulletX += Math.abs(2 * Math.cos(angle));
-//         bulletY += Math.abs(2 * Math.sin(angle));
-//         currentBullet.style.left = bulletX + 'px';
-//         currentBullet.style.top = bulletY + 'px';
-//       } 
-//   } 
-// });
+// const playAudio = () => {
+//   console.log('playing', event)
+//   audio.muted = false;
+//   audio.play();
+// }
+// // audio.play()
+
+// document.getElementsByTagName('body')[0].addEventListener('mouseover',playAudio);
+
 
