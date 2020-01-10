@@ -237,19 +237,15 @@ function moveZombie(zombie) {
 
     /* Reminder spawn points for zombies are the edges of the map */
     if(angle <= 90) {
-        zombie.style.background = `url(./images/ZombieCA.png)`;
         zombie.style.left = `${zombieX + dx}px`;
         zombie.style.top = `${zombieY - dy}px`;
     } else if (angle <= 180) {
-        zombie.style.background = `url(./images/ZombieCA_left.png)`;
-        zombie.style.left = `${zombieX - dx}px`;
+          zombie.style.left = `${zombieX - dx}px`;
         zombie.style.top = `${zombieY - dy}px`;
     } else if (angle <= 270) {
-      zombie.style.background = `url(./images/ZombieCA_left.png)`;
         zombie.style.left = `${zombieX - dx}px`;
         zombie.style.top = `${zombieY + dy}px`;
     } else if (angle <= 360) {
-        zombie.style.background = `url(./images/ZombieCA.png)`;
         zombie.style.left = `${zombieX + dx}px`;
         zombie.style.top = `${zombieY + dy}px`;
     }
