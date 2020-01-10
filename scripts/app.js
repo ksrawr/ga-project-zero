@@ -42,6 +42,9 @@ const lootBox = [
 ];
 
 let time = 25;
+let backgroundChangeTime = 7;
+
+const backgroundElem = document.getElementById('area-backdrop');
 
 let gameRunning = false;
 
@@ -424,9 +427,19 @@ function startGame() {
         createZombie();
       }
     }
+
+    if(backgroundChangeTime <= 0) {
+      const screamAudio = new Audio('./sounds/scream.mp3');
+      screamAudio.play();
+
+      backgroundChangeTime = 7;
+    }
+
+    backgroundChangeTime--;
     score = score + 5;
     scoreDisplay.textContent = `SCORE: ${score}`;
   }, 5000);
+
 }
 
 function endGame() {
