@@ -39,10 +39,6 @@ section div button {
   text-transform: uppercase;
 }
 
-/* section h1 {
-  margin-bottom: 100px;
-} */
-
 section button {
   height: 50px;
   width: 120px;
@@ -95,7 +91,6 @@ main p {
 .bullet {
   width: 20px;
   height: 20px;
-  /* background: url(../images/bulletc.png); */
   background-color: greenyellow;
   border: 1px solid yellow;
   border-radius: 100%;
@@ -196,4 +191,11 @@ main p {
   color: crimson;
   position: relative;
   font-size: 32px;
+}
+
+#area-backdrop {
+  display: none;
+  background: url('./images/zombie_background.jpg');
+  position: absolute;
+  opacity: 0.6;
 }
