@@ -278,14 +278,53 @@ function moveZombie(zombie) {
 function checkCollision(a, b) {
   const aLeft = parseInt(a.style.left);
   const aTop = parseInt(a.style.top);
-  const aBottom = aTop + parseInt(a.offsetTop);
+  const aBottom = aTop + parseInt(a.offsetHeight);
   const aRight = aLeft + parseInt(a.offsetWidth);
 
   const bLeft = parseInt(b.style.left);
   const bTop = parseInt(b.style.top);
-  const bBottom = aTop + parseInt(a.offsetTop);
-  const bRight = aLeft + parseInt(b.offsetWidth);
+  const bBottom = bTop + parseInt(b.offsetHeight);
+  const bRight = bLeft + parseInt(b.offsetWidth);
 
+  if (aLeft <= bLeft && bLeft <= aRight && aRight <= bRight) {
+    if( aTop <= bTop && bTop <= aBottom && aBottom <= bBottom){
+      return true;
+    } else if(bTop <= aTop && aTop <= bBottom && bBottom <= aBottom) {
+      return true;
+    } else if(bTop <= aBottom && aBottom <= bBottom) {
+      return true;
+    }
+  }
+
+  if(bLeft <= aLeft && aLeft <= bRight && aRight) {
+    if(bTop <= aBottom && aBottom <= bBottom) {
+      return true;
+    } else if(bTop <= aTop &&aTop <= bBottom) {
+      return true;
+    } else if(aTop <= bTop && bTop <= aBottom && aBottom <= bBottom) {
+      return true;
+    }
+  }
+
+  if(bLeft <= aRight && aRight <= bRight && bTop <= aBottom && aBottom <= bBottom) {
+    return true;
+  } else if (bLeft <= aRight && aRight <= bRight && bTop <= aTop && aTop <= bBottom) {
+    return true;
+  } else if (bLeft <= aLeft && aLeft <= bRight && bTop <= aBottom && aBottom <= bBottom) {
+    return true;
+  } else if (bLeft <= aLeft && aLeft <= bRight && bTop <= aTop &&aTop <= bBottom) {
+    return true;
+  }
+
+  if(bTop <= aTop && aTop <= bBottom && bBottom <= aBottom) {
+    if(aLeft <= bLeft && bRight <= aRight) {
+      return true;
+    }
+  } else if (aTop <= bTop && bTop <= aBottom && aBottom <= bBottom) {
+    if(aLeft <= bLeft && bRight <= aRight) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -398,61 +437,9 @@ function checkNukeCollision() {
     const playerRight = playerLeft + 48;
     const playerBottom = playerTop + 51;
     nukes.forEach((nuke) => {
-      const nukeLeft = parseInt(nuke.style.left);
-      const nukeTop = parseInt(nuke.style.top);
-      const nukeRight = nukeLeft + 31;
-      const nukeBottom = nukeTop + 31;
-      
-      if (playerLeft <= nukeLeft && nukeLeft <= playerRight && playerRight <= nukeRight) {
-        if( playerTop <= nukeTop && nukeTop <= playerBottom && playerBottom <= nukeBottom){
-          nuke.remove();
-          nukeCollides = true;
-        } else if(nukeTop <= playerTop && playerTop <= nukeBottom && nukeBottom <= playerBottom) {
-          nuke.remove();
-          nukeCollides = true;
-        } else if(nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-          nuke.remove();
-          nukeCollides = true;
-        }
-      }
-    
-      if(nukeLeft <= playerLeft && playerLeft <= nukeRight && playerRight) {
-        if(nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-          nuke.remove();
-          nukeCollides = true;
-        } else if(nukeTop <= playerTop &&playerTop <= nukeBottom) {
-          nuke.remove();
-          nukeCollides = true;
-        } else if(playerTop <= nukeTop && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-          nuke.remove();
-          nukeCollides = true;
-        }
-      }
-    
-      if(nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
+      if(checkCollision(player, nuke)) {
         nuke.remove();
         nukeCollides = true;
-      } else if (nukeLeft <= playerRight && playerRight <= nukeRight && nukeTop <= playerTop && playerTop <= nukeBottom) {
-        nuke.remove();
-        nukeCollides = true;
-      } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-        nuke.remove();
-        nukeCollides = true;
-      } else if (nukeLeft <= playerLeft && playerLeft <= nukeRight && nukeTop <= playerTop &&playerTop <= nukeBottom) {
-        nuke.remove();
-        nukeCollides = true;
-      }
-
-      if(nukeTop <= playerTop && playerTop <= nukeBottom && nukeBottom <= playerBottom) {
-        if(playerLeft <= nukeLeft && nukeRight <= playerRight) {
-          nuke.remove();
-          nukeCollides = true;
-        }
-      } else if (playerTop <= nukeTop && nukeTop <= playerBottom && playerBottom <= nukeBottom) {
-        if(playerLeft <= nukeLeft && nukeRight <= playerRight) {
-          nuke.remove();
-          nukeCollides = true;
-        }
       }
     });
   }
