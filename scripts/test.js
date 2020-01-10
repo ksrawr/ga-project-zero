@@ -39,11 +39,11 @@ const lootBox = [
   'loot-nuke'
 ];
 
-let time = 15;
+let time = 25;
 
 let gameRunning = false;
 
-const startBtn = document.querySelector('button');
+const startBtn = document.querySelector('.start');
 
 /* ----------- functions ----------- */
 
@@ -80,9 +80,9 @@ function movePlayer(event) {
     x += 5;
     player.style.left = x + 'px';
     player.style.background = 'url(./images/AH-People12.png) -46px -96px';
-    if(checkNukeCollision()) {
-      nukeZombies();
-    }
+    // if(checkNukeCollision()) {
+    //   nukeZombies();
+    // }
   }
   if(checkNukeCollision()) {
     nukeZombies();
@@ -112,6 +112,9 @@ function fireBullet(event) {
 
   const bullet = createBulletElement();
   main.insertAdjacentElement('beforeend', bullet);
+
+  const bulletSound = new Audio('./sounds/Gun+1.wav');
+  bulletSound.play();
 
   const speed = 50;
   const dx = speed * Math.abs(Math.cos(angle));
@@ -143,9 +146,6 @@ function moveBullet(bullet, angle, dx, dy) {
         clearInterval(bulletMoveInterval);
       }
     });
-
-    const bulletSound = new Audio('./sounds/Gun+1.wav');
-    bulletSound.play();
 
     if(angle < 90) {
       if(bulletX === 0 || bulletX === windowLimitX || bulletY === 0 || bulletY === windowLimitY ) {
@@ -360,16 +360,20 @@ function checkZombiePlayerCollision(zombie) {
   //   return true;
   // }
 
-  if(playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
-    return true;
-  } 
-  if (playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieTop && zombieTop <= playerBottom) {
-    return true;
-  } 
-  if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
-    return true;
-  }
-  if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieTop &&zombieTop <= playerBottom) {
+  // if(playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+  //   return true;
+  // } 
+  // if (playerLeft <= zombieRight && zombieRight <= playerRight && playerTop <= zombieTop && zombieTop <= playerBottom) {
+  //   return true;
+  // } 
+  // if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieBottom && zombieBottom <= playerBottom) {
+  //   return true;
+  // }
+  // if (playerLeft <= zombieLeft && zombieLeft <= playerRight && playerTop <= zombieTop &&zombieTop <= playerBottom) {
+  //   return true;
+  // }
+  // return false;
+  if(checkCollision(player, zombie)) {
     return true;
   }
   return false;
@@ -478,6 +482,7 @@ const setTimer = (zombie) => {
       if(zombie !== undefined ) {
         zombie.remove();
       }
+      time = 25;
       clearInterval(timer);
       if(time >= 0) setTimer();
     }
@@ -486,6 +491,7 @@ const setTimer = (zombie) => {
 }
 
 function startGame() {
+  console.log('game running');
   gameRunning = true;
   const header = document.querySelector('section');
   header.style.display = 'none';
@@ -501,19 +507,19 @@ function startGame() {
 
   window.addEventListener('keydown', () => movePlayer(event));
 
-  // for(let i = 0; i < 2; i++) {
-  //   createZombie();
-  // }
-  // let zombieSpawnInterval = setInterval(() => {
-  //   if(checkLastZombie()) {
-  //     increaseZombieCount();
-  //     for(let i = 0; i <= zombieCount; i++) {
-  //       createZombie();
-  //     }
-  //   }
-  //   score = score + 5;
-  //   scoreDisplay.textContent = `SCORE: ${score}`;
-  // }, 5000);
+  for(let i = 0; i < 2; i++) {
+    createZombie();
+  }
+  let zombieSpawnInterval = setInterval(() => {
+    if(checkLastZombie()) {
+      increaseZombieCount();
+      for(let i = 0; i <= zombieCount; i++) {
+        createZombie();
+      }
+    }
+    score = score + 5;
+    scoreDisplay.textContent = `SCORE: ${score}`;
+  }, 5000);
 }
 
 function endGame() {

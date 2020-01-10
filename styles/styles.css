@@ -13,41 +13,45 @@ body {
 section {
   height: 100vh;
   width: 100vw;
+  background-color: black;
+}
+
+.hero {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
+}
+
+section div h1 {
+  font-size: 100px;
+  color: crimson;
+  margin-bottom: 20px;
+}
+
+.container {
+  height: 100px;
+}
+
+section div button {
+  text-transform: uppercase;
 }
 
 /* section h1 {
-  text-align: center;
-} */
-
-.container {
-  width: 500px;
-  height: 500px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.instructions-container {
-  width: 200px;
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-section h1 {
   margin-bottom: 100px;
-}
+} */
 
 section button {
   height: 50px;
-  width: 100px;
+  width: 120px;
+  margin: 5px;
+}
+
+button a {
+  text-decoration: none;
+  color: black;
 }
 
 section button:hover {
@@ -60,8 +64,11 @@ main {
   height: 100vh;
   background: url(../images/backgrounddetailed5.png);
   background-size: cover;
-  /* background-color: #f1f1f1; */
   cursor: crosshair;
+}
+
+main .score {
+  font-size: 30px;
 }
 
 main p {
@@ -141,7 +148,7 @@ main p {
   position: absolute;
   background: url(../images/explosion-4.png) 0 0;
   z-index: 3;
-  animation: play 5s steps(12);
+  animation: play 6s steps(12);
 }
 
 @keyframes play {
@@ -160,4 +167,33 @@ main p {
   font-size: 100px;
   color: crimson;
   text-decoration: overline underline;
+}
+
+#instructions {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  background: none;
+  background-color: black;
+  cursor: default;
+  font-size: 32px;
+  color: crimson;
+}
+
+#instructions h3 {
+  margin-bottom: 20px;
+  text-decoration: underline;
+}
+
+#instructions button {
+  margin-top: 20px;
+  text-transform: uppercase;
+  height: 50px;
+  width: 120px;
+}
+
+#instructions p {
+  color: crimson;
+  position: relative;
+  font-size: 32px;
 }
