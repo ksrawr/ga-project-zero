@@ -34,11 +34,11 @@ let zombieSpeed = 10;
 let zombieCount = 3;
 
 const lootBox = [
-  // null,
-  // null,
-  // null,
-  // null,
-  // 'loot-ftw',
+  null,
+  null,
+  'loot-right-leg',
+  'loot-left-shoulder',
+  'loot-head',
   'loot-nuke'
 ];
 
@@ -397,13 +397,12 @@ function checkBulletCollision(bullet, zombie) {
 
 function createLoot(x, y) {
   console.log("we working");
-  const random = Math.floor(Math.random() * lootBox);
-  // const className = lootBox[random];
-  const className = lootBox[0];
+  const random = Math.floor(Math.random() * lootBox.length);
+  const className = lootBox[random];
   if(className !== null || className !== 'loot-ftw') {
     console.log("whattt");
     const loot = document.createElement('div');
-    loot.classList.add('loot-nuke');
+    loot.classList.add(className);
     loot.style.left = `${x}px`;
     loot.style.top = `${y}px`;
     return loot

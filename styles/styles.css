@@ -58,7 +58,9 @@ main {
   display: none;
   width: 100vw;
   height: 100vh;
-  background-color: #f1f1f1;
+  background: url(../images/backgrounddetailed5.png);
+  background-size: cover;
+  /* background-color: #f1f1f1; */
   cursor: crosshair;
 }
 
@@ -100,7 +102,26 @@ main p {
   z-index: 1;
 }
 
+.loot-head {
+  width: 25px;
+  height: 22px;
+  background: url(../images/head52.png);
+  position: absolute;
+}
 
+.loot-left-shoulder {
+  width: 22px;
+  height: 30px;
+  background: url(../images/left_showlder_12.png);
+  position: absolute;
+}
+
+.loot-right-leg {
+  width: 18px;
+  height: 35px;
+  background: url(../images/right_leg_down12.png);
+  position: absolute;
+}
 
 .loot-nuke {
   width: 31px;
