@@ -7,6 +7,10 @@
 
 ## Wireframes
 
+![text](https://i.imgur.com/jN4aMPv.jpg)
+![text](https://i.imgur.com/7eHoud2.jpg)
+![text](https://i.imgur.com/Pf9dG0L.jpg)
+
 ## User Stories
 
 1. User click start button and the round starts
