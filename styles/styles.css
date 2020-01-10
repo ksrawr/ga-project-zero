@@ -88,7 +88,10 @@ main p {
 .bullet {
   width: 20px;
   height: 20px;
-  background: url(../images/bulletc.png);
+  /* background: url(../images/bulletc.png); */
+  background-color: greenyellow;
+  border: 1px solid yellow;
+  border-radius: 100%;
   top: 0;
   left: 0;
   position: absolute;
